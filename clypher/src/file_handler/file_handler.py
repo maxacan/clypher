@@ -14,7 +14,6 @@ class FileHandler:
         force_overwrite: bool = False
     ) -> None:
         
-        print(files)
         for path in files:
             if not (path.is_file() or path.is_dir()):
                 raise FileNotFoundError(f"Cant find file or directory: {path}")
