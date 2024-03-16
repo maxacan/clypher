@@ -1,23 +1,33 @@
 import pkg_resources
+import sys
 
 import typer
 
 from typing import List, Optional
 from pathlib import Path
+from os import environ
 
 from typing_extensions import Annotated
 from rich import print
 from rich.align import Align
 
+from src.import_handler.import_handler import import_engine
 
-from src.file_handler.file_handler import FileHandler
+debug = environ.get("CLYPHER_DEBUG", False)
+
+if debug is False:
+    sys.tracebacklimit = 0
+
+else:
+    sys.tracebacklimit = -1
+    
 
 app = typer.Typer(
-    pretty_exceptions_show_locals=False
+    pretty_exceptions_enable=environ.get("CLYPHER_DEBUG", "false").lower() in ("true", "1")
 )
 
-VERSIONNO = pkg_resources.require('clypher')[0].version
-VERSIONMSG = f"[bold blue]Clypher[/bold blue] v{VERSIONNO}"
+from _version import __version__
+VERSIONMSG = f"[bold blue]Clypher[/bold blue] v{__version__}"
 
 BANNER = Align(
     f"""[bold cyan]
@@ -26,10 +36,9 @@ BANNER = Align(
  / /  | | | | | '_ \| '_ \ / _ \ '__|
 / /___| | |_| | |_) | | | |  __/ |   
 \____/|_|\__, | .__/|_| |_|\___|_|   
-         |___/|_| v{VERSIONNO}
+         |___/|_| v{__version__}
 
 [/bold cyan]""", align="center")
-
 
 @app.command()
 def version():
@@ -67,14 +76,20 @@ def enc(
             "--fo",
             help="If used, force the app to overwrite any output files that may already exist. Defaults to False."
         )
-    ] = False
+    ] = False,
+    engine: Annotated[
+        Optional[str],
+        typer.Option(help="The encryption engine to use.")
+    ] = "fernet"
 ):
     """
     Encrypt the file, files or directories passed as arguments.
     """
     if len(input_files) == 0 and _in is None:
         raise SystemExit("ERROR: No input was provided.")
-
+    #TODO: permitir poner un puntito para que encripte todos los archivos de un directorio
+    #TODO: Permitir mangle_names
+    #TODO: permitir extensiones de archivo personalizadas
     if input_files:
         # Remove duplicates
         input_files = set(input_files)
@@ -94,12 +109,8 @@ def enc(
             raise SystemExit(
                 "ERROR: Multiple inputs mapped to a single output.")
 
-
-    fa = FileHandler(
-        files=input_files or _in,
-        out = out,
-        force_overwrite=force_overwrite
-    )
+    # Import the engine needed for operation
+    engine_class = import_engine(engine)
 
     if not password:
         print("[bold red]WARNING:[/bold red] Choose a password carefully.")
@@ -111,11 +122,22 @@ def enc(
             hide_input=True,
             confirmation_prompt=True
         )
+    
+    engine_class = engine_class(
+        password = password,
+        infiles = input_files or [_in],
+        output = out,
+        force_ow = force_overwrite
+    )
+
+    engine_class.start_encryption()
 
 
 def main():
     print(BANNER)
     app()
 
+#FIXME Por que no funciona cuando se lo llama solo
 if __name__ == "__main__":
+    
     main()

@@ -1,5 +1,4 @@
 from setuptools import setup, find_packages
-import re
 
 VERSIONFILE = "clypher/_version.py"
 with open(VERSIONFILE) as vf:
@@ -15,10 +14,11 @@ setup(
         "Sphinx",
         "typer[all]",
         "pytest",
+        "cryptography"
     ],
     entry_points={
         "console_scripts": [
-            "clypher = clypher.main:app"
+            "clypher = clypher.main:main"
         ]
     }
 )

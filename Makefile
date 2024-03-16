@@ -11,9 +11,6 @@ uninstall:
 install: uninstall
 	pip install .
 
-test:
-	pytest
-
 help:
 	@echo "Commands: "
 	@echo "  test       : Run tests"
