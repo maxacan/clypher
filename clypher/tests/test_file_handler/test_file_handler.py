@@ -77,9 +77,9 @@ class TestFileHandler:
 
         assert fh.request() is None
 
-    def test_fh_generates_correct_default_output_names(self, create_infile):
+    def test_fh_generates_correct_default_output_names_on_encryption(self, create_infile):
         """
-        Test if the file handler can correctly generate output names.
+        Test if the file handler can correctly generate output names when encrypting.
         """
 
         infile = create_infile
@@ -91,9 +91,13 @@ class TestFileHandler:
         fh.request()
         fh.write(b"test")
 
-        assert fh.__dict__["_FileHandler__output_filepath"] == Path(str(infile) + ".clypher")
+        assert fh.output_filepath == Path(str(infile) + ".clypher")
 
-    def test_fh_writes_output_file_correctly(self, create_infile, tmp_path):
+    @pytest.mark.xfail
+    def test_fh_generates_correct_default_output_names_on_decryption(self, create_infile):
+        raise NotImplementedError
+
+    def test_fh_writes_output_file_correctly_on_encryption(self, create_infile, tmp_path):
         
         infile = create_infile
 

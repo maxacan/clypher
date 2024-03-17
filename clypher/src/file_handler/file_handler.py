@@ -15,7 +15,8 @@ class FileHandler:
         self,
         files: list[Path],
         out: Path | None = None,
-        force_overwrite: bool = False
+        force_overwrite: bool = False,
+        decrypting: bool = False
     ) -> None:
 
         for path in files:
@@ -33,6 +34,7 @@ class FileHandler:
 
         self.__out = out
         self.__force_ow = force_overwrite
+        self.__decrypting = decrypting
         self.__file_list = self._generate_file_list(files)
 
     def _exists(self, path: Path) -> bool:
@@ -45,8 +47,11 @@ class FileHandler:
         if self.__out:
             outfile = self.__out
         else:
-            outfile = currfile.parent / \
-                Path(currfile.name + ".clypher")
+            if self.__decrypting:
+                outfile = currfile.parent /  Path(currfile.name.rstrip(".clypher"))
+
+            else:
+                outfile = currfile.parent / Path(currfile.name + ".clypher")
 
         return outfile
 
@@ -67,21 +72,21 @@ class FileHandler:
 
         return file_list
 
-    def request(self) -> bytes | None:
+    def request(self) -> tuple[Path, bytes] | None:
         """
-        Reads and returns the next file to be encrypted as bytes, or None if there are no more files
-        to encrypt.
+        Reads and returns the next file to be processed as bytes, along with its filename,
+        or None if there are no more files to process.
         """
         try:
-            self.__currfile, self.__output_filepath = self.__file_list.pop()
+            self.currfile, self.output_filepath = self.__file_list.pop()
 
             # TODO: Dividir en chunks para no tener que cargar todo el archivo en memoria.
 
-            return open(self.__currfile, "rb").read()
+            return open(self.currfile, "rb").read()
         except IndexError:
             return None
 
     def write(self, data: bytes) -> None:
         #TODO: Si no existe el directorio, hay que crearlo
-        with open(self.__output_filepath, "wb") as f:
+        with open(self.output_filepath, "wb") as f:
             f.write(data)
