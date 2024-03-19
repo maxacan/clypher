@@ -13,7 +13,7 @@ from rich.align import Align
 
 from src.import_handler.import_handler import import_engine
 
-debug = environ.get("CLYPHER_DEBUG", True)
+debug = environ.get("CLYPHER_DEBUG", False)
 
 if debug is False:
     sys.tracebacklimit = 0
@@ -23,9 +23,8 @@ else:
 
 
 app = typer.Typer(
-    # pretty_exceptions_enable=environ.get(
-    #     "CLYPHER_DEBUG", "false").lower() in ("true", "1")
-    pretty_exceptions_enable=True
+    pretty_exceptions_enable=environ.get(
+        "CLYPHER_DEBUG", "false").lower() in ("true", "1")
 )
 
 VERSIONMSG = f"[bold blue]Clypher[/bold blue] v{__version__}"
@@ -45,7 +44,6 @@ BANNER = Align(
 def validate_infiles(
     input_files: list[Path],
     _in: Path | None = None,
-    out: Path | None = None
 ):
     # If the list of input files is empty, and no input file was
     # specified using --in, fail.
@@ -64,11 +62,6 @@ def validate_infiles(
             )
         )
 
-    # Check if there are multiple inputs and only one output. If so, fail.
-    if len(input_files) > 1 and out is not None:
-        raise SystemExit(
-            "ERROR: Multiple inputs mapped to a single output.")
-    
     return input_files
 
 
@@ -109,11 +102,11 @@ def dec(
         Optional[Path],
         typer.Option(
             "--in",
-            help="Input file or directory.")
+            help="Input file.") #TODO: Eliminar _in
     ] = None,
     out: Annotated[
         Optional[Path],
-        typer.Option(help="Output file name.")
+        typer.Option(help="Output directory name.")
     ] = None,
     password: Annotated[
         Optional[str],
@@ -136,7 +129,6 @@ def dec(
     input_files = validate_infiles(
         input_files=input_files,
         _in = _in,
-        out = out
     )
 
     if password is None:
@@ -165,11 +157,11 @@ def enc(
         Optional[Path],
         typer.Option(
             "--in",
-            help="Input file or directory.")
+            help="Input file or directory.") #TODO: eliminar _in
     ] = None,
     out: Annotated[
         Optional[Path],
-        typer.Option(help="Output file name.")
+        typer.Option(help="Output dir.")
     ] = None,
     password: Annotated[
         Optional[str],
@@ -200,7 +192,6 @@ def enc(
     input_files = validate_infiles(
         input_files=input_files,
         _in=_in,
-        out=out
     )
 
     if password is None:

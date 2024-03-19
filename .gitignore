@@ -162,3 +162,4 @@ cython_debug/
 todo.md
 .vscode/
 testfolder/
+*.clypher

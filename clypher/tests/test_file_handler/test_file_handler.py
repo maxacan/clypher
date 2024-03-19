@@ -45,11 +45,10 @@ class TestFileHandler:
             )
 
     def test_fh_fails_if_automatic_output_already_exists(self, create_file_pair):
-        infile, outfile = create_file_pair
-
+        infile, _ = create_file_pair
 
         with pytest.raises(FileExistsError):
-            fh = FileHandler(
+            FileHandler(
                 [infile],
                 force_overwrite=False
             )
@@ -79,7 +78,7 @@ class TestFileHandler:
 
     def test_fh_generates_correct_default_output_names_on_encryption(self, create_infile):
         """
-        Test if the file handler can correctly generate output names when encrypting.
+        When encrypting, the file handler should add the .clypher extension to any files written.
         """
 
         infile = create_infile
@@ -93,11 +92,42 @@ class TestFileHandler:
 
         assert fh.output_filepath == Path(str(infile) + ".clypher")
 
-    @pytest.mark.xfail
-    def test_fh_generates_correct_default_output_names_on_decryption(self, create_infile):
-        raise NotImplementedError
+    def test_fh_generates_correct_default_output_names_on_decryption(self, tmp_path):
+        """
+        On decryption, the file handler should delete the .clypher extension.
+        """
+        infile = tmp_path / "encrypted.txt.clyper"
+        infile.write_bytes(b"f91j2949s")
+
+        fh = FileHandler(
+            [infile],
+            decrypting=True
+        )
+
+        fh.request()
+
+        assert fh.output_filepath == tmp_path / "encrypted.txt"
+
+    def test_fh_fails_when_input_is_directory(self, tmp_path):
+        """
+        Make sure the base file handler fails if the input is a directory, as they are
+        not supported yet.
+
+        #TODO: Delete test when support for directories is added.
+        """
+        directory = tmp_path / "testdir"
+
+        directory.mkdir()
+
+        with pytest.raises(NotImplementedError):
+            FileHandler(
+                files = [directory]
+            )
 
     def test_fh_writes_output_file_correctly_on_encryption(self, create_infile, tmp_path):
+        """
+        Test that an output is written when using FileHandler.write()
+        """
         
         infile = create_infile
 
@@ -110,3 +140,15 @@ class TestFileHandler:
 
         assert (tmp_path / "infile.txt.clypher").is_file()
 
+    def test_fh_fails_when_output_dir_not_exists(self, create_infile, tmp_path):
+        """
+        If the output directory specified by --out does not exist, the file handler should raise an error.
+
+        #TODO: Remove if directory creation functionality is added.
+        """
+
+        with pytest.raises(FileNotFoundError):
+            FileHandler(
+                files = [create_infile],
+                out = tmp_path / "non-existant-dir"
+            )

@@ -28,7 +28,7 @@ def test_enc_fails_if_no_args_passed():
     assert result.exc_info[0] is SystemExit, \
         "The enc command didn't exit when no input was provided."
 
-#TODO: Test absolute and relative directories
+
 def test_enc_fails_if_implicit_and_explicit_inputs():
     """
     Test if the enc command fails if the user specifies an implicit file name, followed by 
@@ -44,6 +44,7 @@ def test_enc_fails_if_implicit_and_explicit_inputs():
 def test_enc_fails_if_multiple_in_single_out():
     """
     Test if the enc command fails if the user inputs multiple files with only one explicit output.
+    #TODO: Sacar esto, o dejarlo unicamente si la salida son archivos
     """
 
     result = RUNNER.invoke(

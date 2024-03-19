@@ -1,9 +1,6 @@
 from pathlib import Path
+from _version import __version__
 
-#TODO añadir soporte para directorios
-# no debería ser más que modificar esta clase. Total la encrypcion es la misma
-#TODO: Mover a una clase abstracta, y tener dos clases distintas, una para directorio y otra para archivos
-# después, crear un adaptador para los dos, que se maneje solo con el encryptor y los handlers
 
 class FileHandler:
     """
@@ -20,17 +17,30 @@ class FileHandler:
     ) -> None:
 
         for path in files:
-            if not (path.is_file() or path.is_dir()):
-                raise FileNotFoundError(f"Cant find file or directory: {path}")
+            if path.is_dir():
+                raise NotImplementedError(
+                    f"Clypher v {__version__} does not support encrypting directories yet.")
+            if not path.is_file():
+                raise FileNotFoundError(f"Cant find file: {path}")
 
         if out is not None:
+            # Que out sea solo para directorios. Si no existen o son archivos, tirar error
             if out.is_file():
-                if force_overwrite:
-                    # TODO: levantar una warning o algo.
-                    pass
-                else:
-                    raise FileExistsError(
-                        f"The output file {out} already exists.")
+                raise TypeError(
+                    f"The output '{out}' is a file, not a directory.")
+
+            elif out.is_dir():
+
+                pass
+
+            else:
+                # If it is not a file nor an existing dir, then it must be a directory that
+                # does not exist.
+                raise FileNotFoundError(f"The output directory '{out}' does not exist.")
+                #TODO: Intentar crearlo? Algo como:
+
+                # if GUI.ask("Output directory doesnt exist, create it?"):
+                #     mkdir()
 
         self.__out = out
         self.__force_ow = force_overwrite
@@ -44,14 +54,23 @@ class FileHandler:
         """
         Given a file path, generate and return its corresponding output file name.
         """
-        if self.__out:
-            outfile = self.__out
-        else:
-            if self.__decrypting:
-                outfile = currfile.parent /  Path(currfile.name.rstrip(".clypher"))
 
-            else:
-                outfile = currfile.parent / Path(currfile.name + ".clypher")
+        #TODO: Añadir soporte para poner todos los archivos en un directorio de salida.
+        #TODO: Ver si se puede trabajar con paths absolutos porque 
+        # parece que --out trabaja desde el directorio de la entrada.
+
+
+        prefix = ""
+        if self.__out:
+            prefix = self.__out
+
+
+        if self.__decrypting:
+            outfile = currfile.parent / Path(prefix) /\
+                Path(currfile.name.rstrip(".clypher"))
+
+        else:
+            outfile = currfile.parent / Path(prefix) / Path(currfile.name + ".clypher")
 
         return outfile
 
@@ -63,12 +82,23 @@ class FileHandler:
         file_list = []
         for file_ in infiles:
             output_path = self._generate_output_path(file_)
+            # TODO: mantener extension original del archivo al encriptar.
+            # para que se pueda restaurar la extensión si por alguna razón
+            # se la pierde. Capaz ponerla al inicio del archivo encriptado.
+            # Esto requeriría cambiar como se guarda la sal.
+            if output_path.is_dir():
+                if self._exists(output_path / file_) and self.__force_ow is False:
+                    raise FileExistsError(
+                        f"The output file for ({output_path}) for the input file ({file_}) already exists.")
 
-            if self._exists(output_path) and self.__force_ow is False:
-                raise FileExistsError(
-                    f"The output file for ({output_path}) for the input file ({file_}) already exists.")
-            
-            file_list.append((file_, output_path))
+                file_list.append((file_, output_path / file_))
+
+            else:
+                if self._exists(output_path) and self.__force_ow is False:
+                    raise FileExistsError(
+                        f"The output file for ({output_path}) for the input file ({file_}) already exists.")
+
+                file_list.append((file_, output_path))
 
         return file_list
 
@@ -87,6 +117,6 @@ class FileHandler:
             return None
 
     def write(self, data: bytes) -> None:
-        #TODO: Si no existe el directorio, hay que crearlo
+        # TODO: Si no existe el directorio, hay que crearlo
         with open(self.output_filepath, "wb") as f:
             f.write(data)
