@@ -2,6 +2,7 @@ import pkg_resources
 from typer.testing import CliRunner
 
 from clypher.__main__ import app
+from clypher._version import __version__
 
 RUNNER = CliRunner()
 
@@ -14,8 +15,7 @@ def test_version():
 
     assert result.exit_code == 0, "Version command exited with non-zero exit code."
     assert "Clypher" in result.stdout
-    assert pkg_resources.require(
-        'clypher')[0].version in result.stdout, "No version number in version command."
+    assert __version__ in result.stdout, "No version number in version command."
 
 
 def test_enc_fails_if_no_args_passed():
@@ -44,6 +44,7 @@ def test_enc_fails_if_implicit_and_explicit_inputs():
 def test_enc_fails_if_multiple_in_single_out():
     """
     Test if the enc command fails if the user inputs multiple files with only one explicit output.
+    #TODO: Sacar esto, o dejarlo unicamente si la salida son archivos
     """
 
     result = RUNNER.invoke(

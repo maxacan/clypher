@@ -10,8 +10,8 @@ class BaseEncryptor(ABC):
     
     @abstractmethod
     def encrypt(self, data: bytes) -> bytes:
-        pass
+        raise NotImplementedError("An encryptor subclassing BaseEncryptor must define an encrypt() method.")
 
     @abstractmethod
     def decrypt(self, data: bytes) -> bytes:
-        pass
+        raise NotImplementedError("An encryptor subclassing BaseEncryptor must define a decrypt() method.")
