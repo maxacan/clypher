@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from _version import __version__
 
@@ -11,38 +12,39 @@ class FileHandler:
     def __init__(
         self,
         files: list[Path],
-        out: Path | None = None,
+        output_dir: Path | None = None,
         force_overwrite: bool = False,
         decrypting: bool = False
     ) -> None:
 
-        for path in files:
+        for idx, path in enumerate(files):
             if path.is_dir():
+                #FIXME Change this when support for directories is added
                 raise NotImplementedError(
                     f"Clypher v {__version__} does not support encrypting directories yet.")
             if not path.is_file():
-                raise FileNotFoundError(f"Cant find file: {path}")
+                raise FileNotFoundError(f"Cant find input file: {path}")
+            
+            # Convert to absolute
+            files[idx] = os.path.abspath(path)
 
-        if out is not None:
-            # Que out sea solo para directorios. Si no existen o son archivos, tirar error
-            if out.is_file():
+        if output_dir is not None:
+            if output_dir.is_file():
                 raise TypeError(
-                    f"The output '{out}' is a file, not a directory.")
+                    f"The output '{output_dir}' is a file, not a directory.")
 
-            elif out.is_dir():
-
-                pass
+            elif output_dir.is_dir():
+               output_dir = os.path.abspath(output_dir)
 
             else:
-                # If it is not a file nor an existing dir, then it must be a directory that
+                # If it is not a file nor an existing dir, then assume it to be a directory that
                 # does not exist.
-                raise FileNotFoundError(f"The output directory '{out}' does not exist.")
-                #TODO: Intentar crearlo? Algo como:
+                raise FileNotFoundError(f"The output directory '{output_dir}' does not exist.")
 
                 # if GUI.ask("Output directory doesnt exist, create it?"):
                 #     mkdir()
 
-        self.__out = out
+        self.__out = output_dir
         self.__force_ow = force_overwrite
         self.__decrypting = decrypting
         self.__file_list = self._generate_file_list(files)
@@ -55,22 +57,18 @@ class FileHandler:
         Given a file path, generate and return its corresponding output file name.
         """
 
-        #TODO: Añadir soporte para poner todos los archivos en un directorio de salida.
-        #TODO: Ver si se puede trabajar con paths absolutos porque 
-        # parece que --out trabaja desde el directorio de la entrada.
-
-
-        prefix = ""
-        if self.__out:
-            prefix = self.__out
-
+        # if --out is specified, then take that as the base output path
+        # Otherwise, take the parent dir of each file.
+        if self.__out is not None:
+            base_output_path = self.__out
+        else:
+            base_output_path = currfile.parent
 
         if self.__decrypting:
-            outfile = currfile.parent / Path(prefix) /\
-                Path(currfile.name.rstrip(".clypher"))
+            outfile = base_output_path / Path(currfile.name.rstrip(".clypher"))
 
         else:
-            outfile = currfile.parent / Path(prefix) / Path(currfile.name + ".clypher")
+            outfile = base_output_path / Path(currfile.name + ".clypher")
 
         return outfile
 
@@ -80,25 +78,18 @@ class FileHandler:
         (input_filename, output_filename).
         """
         file_list = []
-        for file_ in infiles:
+
+        # Remove possible duplicated files
+        for file_ in set(infiles):
+            file_ = Path(os.path.abspath(file_))
+
             output_path = self._generate_output_path(file_)
-            # TODO: mantener extension original del archivo al encriptar.
-            # para que se pueda restaurar la extensión si por alguna razón
-            # se la pierde. Capaz ponerla al inicio del archivo encriptado.
-            # Esto requeriría cambiar como se guarda la sal.
-            if output_path.is_dir():
-                if self._exists(output_path / file_) and self.__force_ow is False:
-                    raise FileExistsError(
-                        f"The output file for ({output_path}) for the input file ({file_}) already exists.")
 
-                file_list.append((file_, output_path / file_))
+            if self._exists(output_path) and self.__force_ow is False:
+                raise FileExistsError(
+                    f"The output file for ({output_path}) for the input file ({file_}) already exists.")
 
-            else:
-                if self._exists(output_path) and self.__force_ow is False:
-                    raise FileExistsError(
-                        f"The output file for ({output_path}) for the input file ({file_}) already exists.")
-
-                file_list.append((file_, output_path))
+            file_list.append((file_, output_path))
 
         return file_list
 
@@ -109,14 +100,16 @@ class FileHandler:
         """
         try:
             self.currfile, self.output_filepath = self.__file_list.pop()
+        
+            with open(self.currfile, "rb") as f:
+                return f.read()
 
-            # TODO: Dividir en chunks para no tener que cargar todo el archivo en memoria.
-
-            return open(self.currfile, "rb").read()
         except IndexError:
             return None
 
-    def write(self, data: bytes) -> None:
-        # TODO: Si no existe el directorio, hay que crearlo
+    def write(self, data: bytes) -> int:
+        """
+        Write data to the file and return the number of bytes written.
+        """
         with open(self.output_filepath, "wb") as f:
-            f.write(data)
+            return f.write(data)

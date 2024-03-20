@@ -42,30 +42,19 @@ BANNER = Align(
 
 
 def validate_infiles(
-    input_files: list[Path],
-    _in: Path | None = None,
+    input_files: list[Path] | None,
 ):
-    # If the list of input files is empty, and no input file was
-    # specified using --in, fail.
-    if len(input_files) == 0 and _in is None:
+    #FIXME: This function might be useless.
+
+    if len(input_files) == 0:
         raise SystemExit("ERROR: No input was provided.")
-
-    # Delete duplicated input files
-    input_files = set(input_files)
-
-    # Fail if both input_files and --in are used.
-    if input_files and (_in is not None):
-        raise SystemExit(
-            (
-                f"Specified a standalone filename {[str(x) for x in input_files]} along with using [--in {_in}].\n"
-                f"Choose one or the other."
-            )
-        )
 
     return input_files
 
 
 def ask_password(mode: str = "encryption"):
+
+    #FIXME: This should be moved to the GUI class once implemented.
 
     if mode == "encryption":
         print("[bold red]WARNING:[/bold red] Choose a password carefully.")
@@ -98,12 +87,6 @@ def dec(
         List[Path],
         typer.Argument()
     ] = None,
-    _in: Annotated[
-        Optional[Path],
-        typer.Option(
-            "--in",
-            help="Input file.") #TODO: Eliminar _in
-    ] = None,
     out: Annotated[
         Optional[Path],
         typer.Option(help="Output directory name.")
@@ -128,7 +111,6 @@ def dec(
 ):
     input_files = validate_infiles(
         input_files=input_files,
-        _in = _in,
     )
 
     if password is None:
@@ -152,12 +134,6 @@ def enc(
     input_files: Annotated[
         List[Path],
         typer.Argument()
-    ] = None,
-    _in: Annotated[
-        Optional[Path],
-        typer.Option(
-            "--in",
-            help="Input file or directory.") #TODO: eliminar _in
     ] = None,
     out: Annotated[
         Optional[Path],
@@ -185,13 +161,10 @@ def enc(
     Encrypt the file, files or directories passed as arguments.
     """
 
-    # TODO: permitir poner un puntito para que encripte todos los archivos de un directorio
-    # TODO: Permitir mangle_names
     # TODO: permitir extensiones de archivo personalizadas
 
     input_files = validate_infiles(
         input_files=input_files,
-        _in=_in,
     )
 
     if password is None:
@@ -215,7 +188,7 @@ def main():
     app()
 
 
-# FIXME Por que no funciona cuando se lo llama solo
+# FIXME If called as a package, the app crashes on startup.
 if __name__ == "__main__":
 
     main()
