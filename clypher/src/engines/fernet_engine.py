@@ -14,7 +14,7 @@ class FernetEngine(BaseEngine):
 
         self.__fhandler = FileHandler(
             files=self.infiles,
-            out=self.output,
+            output_dir=self.output,
             force_overwrite=self.force_ow,
             decrypting=decrypting
         )
@@ -23,7 +23,8 @@ class FernetEngine(BaseEngine):
         print("\n[cyan]Starting encryption. [/cyan]")
 
         while (file_ := self.__fhandler.request()):
-            # TODO: enviar señal de inicio a la gui
+            # HACK: Print to the console directly for now.
+            # Change this to use the GUI API when implemented.
             print(self.__fhandler.currfile, end="... ")
             
             self.__fhandler.write(
@@ -32,9 +33,9 @@ class FernetEngine(BaseEngine):
                 )
             )
             print("[bold green] OK [/bold green]")
-            # TODO: Enviar señal de final a la gui
 
     def start_decryption(self):
+        # HACK: Print to the console for now.
         print("\n[cyan]Starting decryption... [/cyan]")
         
         while (file_ := self.__fhandler.request()):

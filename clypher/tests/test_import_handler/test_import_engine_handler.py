@@ -1,6 +1,5 @@
 from clypher.src.import_handler.import_handler import import_engine
 import pytest
-from os import listdir
 
 
 def test_import_engine_fails_if_engine_doesnt_exist():

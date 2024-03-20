@@ -1,8 +1,7 @@
-import pkg_resources
 from typer.testing import CliRunner
+from _version import __version__
 
 from clypher.__main__ import app
-from clypher._version import __version__
 
 RUNNER = CliRunner()
 
@@ -39,16 +38,3 @@ def test_enc_fails_if_implicit_and_explicit_inputs():
 
     assert result.exc_info[0] is SystemExit, \
         "The enc command didn't exit when implicit and explicit inputs were provided."
-
-
-def test_enc_fails_if_multiple_in_single_out():
-    """
-    Test if the enc command fails if the user inputs multiple files with only one explicit output.
-    #TODO: Sacar esto, o dejarlo unicamente si la salida son archivos
-    """
-
-    result = RUNNER.invoke(
-        app, ["enc", "file1.a", "file2.a", "--out", "file1.out"])
-
-    assert result.exc_info[0] is SystemExit, \
-        "The enc command didn't fail on multiple inputs with a single output."
