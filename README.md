@@ -52,6 +52,12 @@ clypher <command> --help
 
 ```
 
+## Documentation
+
+[//]: <> (#TODO: Update this once the docs are live.)
+
+For more information about how Clypher works, check the documentation.
+
 ## Contributing
 
 Contributions are welcome! Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file for guidelines.
