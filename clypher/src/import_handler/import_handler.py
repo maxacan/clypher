@@ -15,7 +15,7 @@ def import_engine(engine:str, engine_list: dict = INSTALLED_ENGINES):
         engine_class = getattr(module, class_name)
 
         return engine_class
-            
+
     except AttributeError as e:
         raise e(f"The specified engine module {module_name} has no class {class_name}.")
 

@@ -1,6 +1,6 @@
-from _version import __version__
-import sys
 
+import sys
+import logging
 import typer
 
 from typing import List, Optional
@@ -11,15 +11,18 @@ from typing_extensions import Annotated
 from rich import print
 from rich.align import Align
 
+from _version import __version__
 from src.import_handler.import_handler import import_engine
 
 debug = environ.get("CLYPHER_DEBUG", False)
 
 if debug is False:
     sys.tracebacklimit = 0
+    LOG = logging.getLogger(__name__)
 
 else:
     sys.tracebacklimit = -1
+    LOG = logging.getLogger("debug")
 
 
 app = typer.Typer(
@@ -27,6 +30,7 @@ app = typer.Typer(
         "CLYPHER_DEBUG", "false").lower() in ("true", "1")
 )
 
+#TODO: Move all of this to the GUI class one implemented ----------------------------
 VERSIONMSG = f"[bold blue]Clypher[/bold blue] v{__version__}"
 
 BANNER = Align(
@@ -39,17 +43,6 @@ BANNER = Align(
          |___/|_| v{__version__}
 
 [/bold cyan]""", align="center")
-
-
-def validate_infiles(
-    input_files: list[Path] | None,
-):
-    #FIXME: This function might be useless.
-
-    if len(input_files) == 0:
-        raise SystemExit("ERROR: No input was provided.")
-
-    return input_files
 
 
 def ask_password(mode: str = "encryption"):
@@ -109,9 +102,9 @@ def dec(
         typer.Option(help="The encryption engine to use.")
     ] = "fernet"
 ):
-    input_files = validate_infiles(
-        input_files=input_files,
-    )
+    
+    if len(input_files) == 0:
+        raise SystemExit("ERROR: No input was provided.")
 
     if password is None:
         password = ask_password(mode="decryption")
@@ -161,11 +154,8 @@ def enc(
     Encrypt the file, files or directories passed as arguments.
     """
 
-    # TODO: permitir extensiones de archivo personalizadas
-
-    input_files = validate_infiles(
-        input_files=input_files,
-    )
+    if len(input_files) == 0:
+        raise SystemExit("ERROR: No input was provided.")
 
     if password is None:
         password = ask_password()

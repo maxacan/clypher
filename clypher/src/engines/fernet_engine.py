@@ -1,8 +1,10 @@
 from src.encryptors.fernet_encryptor import FernetEncryptor
-from src.file_handler.file_handler import FileHandler
+from src.logging_config.logger_config import get_logger_or_debug
+from src.file_handlers.file_handler import FileHandler
 from .base_engine import BaseEngine
 from rich import print
 
+LOG = get_logger_or_debug(__name__)
 
 class FernetEngine(BaseEngine):
     def __init__(self, decrypting: bool = False, *args, **kwargs) -> None:
@@ -11,6 +13,7 @@ class FernetEngine(BaseEngine):
         self.__encryptor = FernetEncryptor(
             password=self.password
         )
+        #TODO: pass args and kwargs for modifing kdf parameters.
 
         self.__fhandler = FileHandler(
             files=self.infiles,
@@ -27,11 +30,16 @@ class FernetEngine(BaseEngine):
             # Change this to use the GUI API when implemented.
             print(self.__fhandler.currfile, end="... ")
             
+            LOG.info(f"Encrypting file {self.__fhandler.currfile}...")
+
             self.__fhandler.write(
                 self.__encryptor.encrypt(
                     file_
                 )
             )
+
+            LOG.info(f"Done")
+
             print("[bold green] OK [/bold green]")
 
     def start_decryption(self):
@@ -42,10 +50,14 @@ class FernetEngine(BaseEngine):
             
             print(self.__fhandler.currfile, end="... ")
 
+            LOG.info(f"Decrypting file {self.__fhandler.currfile}...")
+
             self.__fhandler.write(
                 self.__encryptor.decrypt(
                     file_
                 )
             )
+
+            LOG.info(f"Done.")
 
             print("[bold green]OK[/bold green]")
