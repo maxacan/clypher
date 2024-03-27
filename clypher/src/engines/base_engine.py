@@ -18,8 +18,8 @@ class BaseEngine(ABC):
 
     @abstractmethod
     def start_encryption(self):
-        pass
+        raise NotImplementedError(f"Classes subclassing BaseEngine must define a start_encryption method.")
 
     @abstractmethod
     def start_decryption(self):
-        pass
+        raise NotImplementedError(f"Classes subclassing BaseEngine must define a start_decryption method.")

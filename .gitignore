@@ -163,3 +163,4 @@ todo.md
 .vscode/
 testfolder/
 *.clypher
+**/logs/
