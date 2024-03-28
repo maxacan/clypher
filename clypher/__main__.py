@@ -162,7 +162,6 @@ def enc(
 
 def main():
     CONSOLE.print_banner()
-    CONSOLE.print_gplnotice()
     app()
 
 

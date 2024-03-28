@@ -11,7 +11,7 @@ class BaseEngine(ABC):
         output: Path,
         force_ow: bool
     ) -> None:
-        self.password = password
+        self.plaintext_password = password
         self.infiles = infiles
         self.output = output
         self.force_ow = force_ow

@@ -20,16 +20,20 @@ class ConsoleManager:
         console.print(BANNER)
 
     @staticmethod
-    def error(msg: str, show_tag: bool = True, color_msg: bool = True):
+    def error(msg: str, show_tag: bool = True, color_msg: bool = True, newline: bool = False):
         """
         Display a bold [ERROR] tag in red, followed by the message in msg, also in red.
 
         If show_tag is False, the [ERROR] tag will be skipped.
 
         If color_msg is False, only the tag will be red.
-        """
 
-        message = ""
+        If newline, place a newline at the fron of the message.
+        """
+        if newline:
+            message = "\n"
+        else:
+            message = ""
 
         if show_tag:
             message += "[bold red]\[ERROR]: [/bold red]"
@@ -129,7 +133,7 @@ class ConsoleManager:
         return typer.prompt(text=msg, *args, **kwargs)
     
     @staticmethod
-    def confirm(msg: str, *args, **kwargs) -> str:
+    def confirm(msg: str, *args, **kwargs) -> bool:
         return typer.confirm(text=msg, *args, **kwargs)
 
 class ProgressManager:
