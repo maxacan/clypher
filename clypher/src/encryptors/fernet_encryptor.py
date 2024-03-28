@@ -13,11 +13,20 @@ class FernetEncryptor(BaseEncryptor):
     Encrypt and decrypt files using Fernet.
     """
 
-    def __init__(self, password: bytes) -> None:
+    def __init__(self, password: bytes, *args, **kwargs) -> None:
         LOG.debug(f"Initializing a FernetEncryptor instance.")
         super().__init__(password)
 
     def __init_fernet(self, salt: bytes | None = None):
+
+        """
+        Generate a random salt or take it from the argument if specified.
+
+        Using that salt, create a Scrypt instance and use it along with the password to
+        derive the actual encryption key.
+
+        Using that key, initialize a Fernet instance.
+        """
 
         LOG.debug(f"Initializing Fernet.")
 
@@ -45,11 +54,20 @@ class FernetEncryptor(BaseEncryptor):
         LOG.debug("Fernet instance initialized.")
 
     def encrypt(self, data: bytes | bytearray) -> bytearray:
+        """
+        Given data, encrypt it and append the salt at the start.
+        """
+
         self.__init_fernet()
 
         return bytearray(self.__salt) + bytearray(self.__fernet_instance.encrypt(data))
 
     def decrypt(self, data: bytes | bytearray) -> bytes:
+        """
+        Given data, decrypt it.
+
+        Assume the salt will always be the first 16 bytes of the file.
+        """
         self.__init_fernet(salt=data[:16])
 
         return self.__fernet_instance.decrypt(

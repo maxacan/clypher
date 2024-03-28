@@ -2,9 +2,11 @@ import os
 from pathlib import Path
 from _version import __version__
 from src.logging_config.logger_config import get_logger_or_debug
+from src.cli.managers import ConsoleManager as CONSOLE
 
 
 LOG = get_logger_or_debug(__name__)
+
 
 class FileHandler:
     """
@@ -22,27 +24,36 @@ class FileHandler:
 
         for idx, path in enumerate(files):
             if path.is_dir():
-                #FIXME Change this when support for directories is added
+                # FIXME Change this if/when support for directories is added
+                CONSOLE.error(
+                    f"Clypher v {__version__} does not support encrypting directories yet.")
                 raise NotImplementedError(
                     f"Clypher v {__version__} does not support encrypting directories yet.")
+
             if not path.is_file():
+                CONSOLE.error(f"Cant find input file: {path}")
                 raise FileNotFoundError(f"Cant find input file: {path}")
-            
+
             # Convert to absolute
             files[idx] = os.path.abspath(path)
 
         if output_dir is not None:
             if output_dir.is_file():
+                CONSOLE.error(
+                    f"The output '{output_dir}' is a file, not a directory.")
                 raise TypeError(
                     f"The output '{output_dir}' is a file, not a directory.")
 
             elif output_dir.is_dir():
-               output_dir = os.path.abspath(output_dir)
+                output_dir = os.path.abspath(output_dir)
 
             else:
                 # If it is not a file nor an existing dir, then assume it to be a directory that
                 # does not exist.
-                raise FileNotFoundError(f"The output directory '{output_dir}' does not exist.")
+                CONSOLE.error(
+                    f"The output directory '{output_dir}' does not exist.")
+                raise FileNotFoundError(
+                    f"The output directory '{output_dir}' does not exist.")
 
                 # if GUI.ask("Output directory doesnt exist, create it?"):
                 #     mkdir()
@@ -51,6 +62,7 @@ class FileHandler:
         self.force_ow = force_overwrite
         self.decrypting = decrypting
         self.file_list = self._generate_file_list(files)
+        self.file_ammount = len(self.file_list)
 
         LOG.debug(f"FileHandler file list: {self.file_list}")
 
@@ -91,8 +103,12 @@ class FileHandler:
             output_path = self._generate_output_path(file_)
 
             if self._exists(output_path) and self.force_ow is False:
+                CONSOLE.error(
+                    f"The output file for ({output_path}) for the input file ({file_}) already exists."
+                )
                 raise FileExistsError(
-                    f"The output file for ({output_path}) for the input file ({file_}) already exists.")
+                    f"The output file for ({output_path}) for the input file ({file_}) already exists."
+                )
 
             file_list.append((file_, output_path))
 
@@ -105,7 +121,7 @@ class FileHandler:
         """
         try:
             self.currfile, self.output_filepath = self.file_list.pop()
-        
+
             with open(self.currfile, "rb") as f:
                 return f.read()
 

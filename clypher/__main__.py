@@ -1,3 +1,24 @@
+"""
+Clypher. Encrypt files from the command line.
+Copyright (C) 2024 Maximiliano Cancelarich
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+For contacting me, send me an email at maximilianoacan@gmail.com.
+
+Please be aware that THIS PROGRAM IS NOT INTENDED AS A CRYPTOGRAPHICALLY SECURE encryption solution.
+"""
 
 import sys
 import logging
@@ -8,11 +29,10 @@ from pathlib import Path
 from os import environ
 
 from typing_extensions import Annotated
-from rich import print
-from rich.align import Align
 
 from _version import __version__
 from src.import_handler.import_handler import import_engine
+from src.cli.managers import ConsoleManager as CONSOLE
 
 debug = environ.get("CLYPHER_DEBUG", False)
 
@@ -30,48 +50,13 @@ app = typer.Typer(
         "CLYPHER_DEBUG", "false").lower() in ("true", "1")
 )
 
-#TODO: Move all of this to the GUI class one implemented ----------------------------
-VERSIONMSG = f"[bold blue]Clypher[/bold blue] v{__version__}"
-
-BANNER = Align(
-    f"""[bold cyan]
-   ___ _             _               
-  / __\ |_   _ _ __ | |__   ___ _ __ 
- / /  | | | | | '_ \| '_ \ / _ \ '__|
-/ /___| | |_| | |_) | | | |  __/ |   
-\____/|_|\__, | .__/|_| |_|\___|_|   
-         |___/|_| v{__version__}
-
-[/bold cyan]""", align="center")
-
-
-def ask_password(mode: str = "encryption"):
-
-    #FIXME: This should be moved to the GUI class once implemented.
-
-    if mode == "encryption":
-        print("[bold red]WARNING:[/bold red] Choose a password carefully.")
-        print(
-            "Once encrypted, [bold red] the file CANNOT be restored unless the correct password is provided.[/bold red]")
-
-        return typer.prompt(
-            text="Enter a password to be used for the file encryption",
-            hide_input=True,
-            confirmation_prompt=True)
-    
-    elif mode == "decryption":
-        return typer.prompt(
-            text="Enter the file password",
-            hide_input=True,
-            )
-
 
 @app.command()
 def version():
     """
     Prints the current package version.
     """
-    print(VERSIONMSG)
+    CONSOLE.print_version_msg()
 
 
 @app.command()
@@ -104,10 +89,11 @@ def dec(
 ):
     
     if len(input_files) == 0:
-        raise SystemExit("ERROR: No input was provided.")
+        CONSOLE.error("No input was provided.")
+        raise SystemExit(1)
 
     if password is None:
-        password = ask_password(mode="decryption")
+        password = CONSOLE.ask_password(mode="decryption")
 
     engine_class = import_engine(engine)
 
@@ -155,10 +141,11 @@ def enc(
     """
 
     if len(input_files) == 0:
-        raise SystemExit("ERROR: No input was provided.")
+        CONSOLE.error("No input was provided.")
+        raise SystemExit(1)
 
     if password is None:
-        password = ask_password()
+        password = CONSOLE.ask_password(mode="encryption")
 
     # Import the engine needed for operation
     engine_class = import_engine(engine)
@@ -174,11 +161,11 @@ def enc(
 
 
 def main():
-    print(BANNER)
+    CONSOLE.print_banner()
+    CONSOLE.print_gplnotice()
     app()
 
 
-# FIXME If called as a package, the app crashes on startup.
 if __name__ == "__main__":
 
     main()
