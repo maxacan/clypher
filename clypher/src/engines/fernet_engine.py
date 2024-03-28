@@ -1,10 +1,15 @@
 from src.encryptors.fernet_encryptor import FernetEncryptor
 from src.logging_config.logger_config import get_logger_or_debug
 from src.file_handlers.file_handler import FileHandler
+from src.cli.managers import ConsoleManager as CONSOLE
+from src.cli.managers import ProgressManager as PM
 from .base_engine import BaseEngine
-from rich import print
+
+from cryptography.exceptions import InvalidSignature
+from cryptography.fernet import InvalidToken
 
 LOG = get_logger_or_debug(__name__)
+
 
 class FernetEngine(BaseEngine):
     def __init__(self, decrypting: bool = False, *args, **kwargs) -> None:
@@ -13,7 +18,7 @@ class FernetEngine(BaseEngine):
         self.__encryptor = FernetEncryptor(
             password=self.password
         )
-        #TODO: pass args and kwargs for modifing kdf parameters.
+        # TODO: pass args and kwargs for modifing kdf parameters.
 
         self.__fhandler = FileHandler(
             files=self.infiles,
@@ -23,41 +28,69 @@ class FernetEngine(BaseEngine):
         )
 
     def start_encryption(self):
-        print("\n[cyan]Starting encryption. [/cyan]")
+        CONSOLE.info(f"Starting encryption. {self.__fhandler.file_ammount} files to encrypt.\n")
+        files_processed = 0
 
-        while (file_ := self.__fhandler.request()):
-            # HACK: Print to the console directly for now.
-            # Change this to use the GUI API when implemented.
-            print(self.__fhandler.currfile, end="... ")
-            
-            LOG.info(f"Encrypting file {self.__fhandler.currfile}...")
+        progress_indicator = PM(
+            "[cyan]Encrypting...[/cyan]",
+            self.__fhandler.file_ammount
+        )
 
-            self.__fhandler.write(
-                self.__encryptor.encrypt(
-                    file_
-                )
-            )
+        try:
+            with progress_indicator.progress:
 
-            LOG.info(f"Done")
+                while (file_ := self.__fhandler.request()):
+                    progress_indicator.step(self.__fhandler.currfile)
 
-            print("[bold green] OK [/bold green]")
+
+                    LOG.info(f"Encrypting file {self.__fhandler.currfile}...")
+
+                    self.__fhandler.write(
+                        self.__encryptor.encrypt(
+                            file_
+                        )
+                    )
+
+                    files_processed += 1
+
+                    LOG.info(f"Done")
+
+        except KeyboardInterrupt:
+            CONSOLE.warn(f"Stopped encryption after {files_processed} files.\n")
+
+        if files_processed > 0:
+            CONSOLE.success(f"Successfully encrypted {files_processed} files.\n")
 
     def start_decryption(self):
-        # HACK: Print to the console for now.
-        print("\n[cyan]Starting decryption... [/cyan]")
-        
-        while (file_ := self.__fhandler.request()):
-            
-            print(self.__fhandler.currfile, end="... ")
+        CONSOLE.info(f"Starting decryption. {self.__fhandler.file_ammount} files to decrypt.\n")
+        files_processed = 0
 
-            LOG.info(f"Decrypting file {self.__fhandler.currfile}...")
+        progress_indicator = PM(
+            "[cyan]Dencrypting...[/cyan]",
+            self.__fhandler.file_ammount
+        )
 
-            self.__fhandler.write(
-                self.__encryptor.decrypt(
-                    file_
-                )
-            )
+        try:
+            while (file_ := self.__fhandler.request()):
+                with progress_indicator.progress:
+                    progress_indicator.step(self.__fhandler.currfile)
 
-            LOG.info(f"Done.")
+                    LOG.info(f"Decrypting file {self.__fhandler.currfile}...")
 
-            print("[bold green]OK[/bold green]")
+                    self.__fhandler.write(
+                        self.__encryptor.decrypt(
+                            file_
+                        )
+                    )
+
+                    files_processed += 1
+
+                    LOG.info(f"Done.")
+        except KeyboardInterrupt:
+            CONSOLE.warn(f"Stopped decryption after {files_processed} files.")
+
+        except (InvalidSignature, InvalidToken):
+            CONSOLE.error(f"The specified password is incorrect. Stopping the program.")
+
+        if files_processed > 0:
+            CONSOLE.success(f"Successfully decrypted {files_processed} files.")
