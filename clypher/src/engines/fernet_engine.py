@@ -16,9 +16,10 @@ class FernetEngine(BaseEngine):
         super().__init__(*args, **kwargs)
 
         self.__encryptor = FernetEncryptor(
-            password=self.password
+            password=self.password,
+            *args,
+            **kwargs
         )
-        # TODO: pass args and kwargs for modifing kdf parameters.
 
         self.__fhandler = FileHandler(
             files=self.infiles,
@@ -57,6 +58,9 @@ class FernetEngine(BaseEngine):
 
         except KeyboardInterrupt:
             CONSOLE.warn(f"Stopped encryption after {files_processed} files.\n")
+
+        except (InvalidSignature, InvalidToken):
+            CONSOLE.error(f"The specified password is incorrect. Stopping the program.")
 
         if files_processed > 0:
             CONSOLE.success(f"Successfully encrypted {files_processed} files.\n")

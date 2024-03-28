@@ -133,8 +133,8 @@ class ConsoleManager:
         return typer.confirm(text=msg, *args, **kwargs)
 
 class ProgressManager:
-    def __init__(self, msg: str, total: int) -> None:
-        self.progress = Progress()
+    def __init__(self, msg: str, total: int, *args, **kwargs) -> None:
+        self.progress = Progress(*args, **kwargs)
         self._task = self.progress.add_task(msg, total=total)
 
     def step(self, msg: str | None = None) -> None:

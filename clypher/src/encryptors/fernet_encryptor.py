@@ -13,7 +13,7 @@ class FernetEncryptor(BaseEncryptor):
     Encrypt and decrypt files using Fernet.
     """
 
-    def __init__(self, password: bytes) -> None:
+    def __init__(self, password: bytes, *args, **kwargs) -> None:
         LOG.debug(f"Initializing a FernetEncryptor instance.")
         super().__init__(password)
 
