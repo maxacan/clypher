@@ -13,12 +13,11 @@ LOG = get_logger_or_debug(__name__)
 
 class FernetEngine(BaseEngine):
     def __init__(self, decrypting: bool = False, *args, **kwargs) -> None:
+
         super().__init__(*args, **kwargs)
 
         self.__encryptor = FernetEncryptor(
-            password=self.password,
-            *args,
-            **kwargs
+            password=self.plaintext_password,
         )
 
         self.__fhandler = FileHandler(
@@ -59,9 +58,6 @@ class FernetEngine(BaseEngine):
         except KeyboardInterrupt:
             CONSOLE.warn(f"Stopped encryption after {files_processed} files.\n")
 
-        except (InvalidSignature, InvalidToken):
-            CONSOLE.error(f"The specified password is incorrect. Stopping the program.")
-
         if files_processed > 0:
             CONSOLE.success(f"Successfully encrypted {files_processed} files.\n")
 
@@ -74,9 +70,9 @@ class FernetEngine(BaseEngine):
             self.__fhandler.file_ammount
         )
 
-        try:
+        with progress_indicator.progress:
             while (file_ := self.__fhandler.request()):
-                with progress_indicator.progress:
+                try:
                     progress_indicator.step(self.__fhandler.currfile)
 
                     LOG.info(f"Decrypting file {self.__fhandler.currfile}...")
@@ -90,11 +86,17 @@ class FernetEngine(BaseEngine):
                     files_processed += 1
 
                     LOG.info(f"Done.")
-        except KeyboardInterrupt:
-            CONSOLE.warn(f"Stopped decryption after {files_processed} files.")
+                except KeyboardInterrupt:
+                    CONSOLE.warn(f"Stopped decryption after {files_processed} files.")
 
-        except (InvalidSignature, InvalidToken):
-            CONSOLE.error(f"The specified password is incorrect. Stopping the program.")
+                except (InvalidSignature, InvalidToken):
+                    progress_indicator.progress.stop()
+                    CONSOLE.error(
+                        (
+                         "The specified file doesn't appear to have been encrypted with the Fernet engine,"
+                         " or the specified password is incorrect."
+                        )
+                    )
 
         if files_processed > 0:
             CONSOLE.success(f"Successfully decrypted {files_processed} files.")
