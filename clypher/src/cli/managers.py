@@ -13,22 +13,32 @@ class ConsoleManager:
 
     @staticmethod
     def print_version_msg():
+        """
+        Print the current version message.
+        """
         console.print(VERSIONMSG)
 
     @staticmethod
     def print_banner():
+        """
+        Print the Clypher banner.
+        """
         console.print(BANNER)
 
     @staticmethod
     def error(msg: str, show_tag: bool = True, color_msg: bool = True, newline: bool = False):
         """
         Display a bold [ERROR] tag in red, followed by the message in msg, also in red.
+    
+        :param msg: The message to print.
+        :type msg: str
+        :param show_tag: Show or hide the [ERROR] tag, defaults to True.
+        :type show_tag: bool, optional.
+        :param color_msg: Also display the message in red, defaults to True.
+        :type color_msg: bool, optional.
+        :param newline: Append a newline before the message, defaults to False.
+        :type newline: bool, optional.
 
-        If show_tag is False, the [ERROR] tag will be skipped.
-
-        If color_msg is False, only the tag will be red.
-
-        If newline, place a newline at the fron of the message.
         """
         if newline:
             message = "\n"
@@ -50,9 +60,12 @@ class ConsoleManager:
         """
         Display a bold [WARNING] tag in red, followed by the message in msg, also in red.
 
-        If show_tag is False, the [WARNING] tag will be skipped.
-
-        If color_msg is False, only the tag will be red.
+        :param msg: The message to print.
+        :type msg: str
+        :param show_tag: Show the [WARNING] tag. If False, hide it, defaults to True.
+        :type show_tag: bool, optional.
+        :param color_msg: Also display the message in red, defaults to True.
+        :type color_msg: bool, optional.
         """
 
         message = ""
@@ -72,7 +85,10 @@ class ConsoleManager:
         """
         Display a bold [INFO] tag in blue, followed by msg.
 
-        If show_tag is false, don't show [INFO]
+        :param msg: The message to print.
+        :type msg: str
+        :param show_tag: Show the [INFO] tag. If False, hide it, defaults to True.
+        :type show_tag: bool, optional.
         """
 
         message = ""
@@ -89,7 +105,10 @@ class ConsoleManager:
         """
         Display a bold [SUCCESS] tag in green, followed by msg.
 
-        If show_tag is false, don't show [SUCCESS]
+        :param msg: The message to print.
+        :type msg: str
+        :param show_tag: Show the [SUCCESS] tag. If False, hide it, defaults to True.
+        :type show_tag: bool, optional.
         """
 
         message = ""
@@ -106,7 +125,11 @@ class ConsoleManager:
         """
         Prompt the user for a password, depending on `mode`.
 
-        Return the plaintext password.
+        :param mode: The mode in which the program is working.
+            This changes the displayed message, defaults to 'encryption'.
+        :type mode: str, optional
+        :returns: The password as plaintext.
+        :rtype str:
         """
 
         if mode == "encryption":
@@ -130,21 +153,50 @@ class ConsoleManager:
 
     @staticmethod
     def prompt(msg: str, *args, **kwargs) -> str:
+        """
+        Prompt the user. args and kwargs are passed to typer.prompt()
+
+        :param msg: The message to show the user.
+        :type msg: str
+        :returns: Whatever the user wrote.
+        :rtype str:
+        """
         return typer.prompt(text=msg, *args, **kwargs)
     
     @staticmethod
     def confirm(msg: str, *args, **kwargs) -> bool:
+        """
+        Prompt the user for confirmation. args and kwargs are passed to typer.prompt()
+
+        :param msg: The message to show the user.
+        :type msg: str
+        :returns: Whatever the user selected.
+        :rtype bool:
+        """
         return typer.confirm(text=msg, *args, **kwargs)
 
 class ProgressManager:
-    def __init__(self, msg: str, total: int, *args, **kwargs) -> None:
-        self.progress = Progress(*args, **kwargs)
+    """
+    Thin wrapper around Rich's Progress class. Provides a single method to interact with it.
+
+    :param msg: The message to show next to the progress bar.
+    :type msg: str
+    :param total: The number of steps
+    :type total: int
+    """
+
+    def __init__(self, msg: str, total: int) -> None:
+        #: The progress instance, used as a context manager.
+        self.progress = Progress()
+        #: The current task.
         self._task = self.progress.add_task(msg, total=total)
 
     def step(self, msg: str | None = None) -> None:
         """
         Update the current task.
-        If msg is a string, update the task description every time a step is performed.
+
+        :param msg: If it isn't None, update the progress bar description.
+        :type msg: str, optional
         """
 
         if msg is not None:

@@ -8,35 +8,9 @@ Engines provide the core functionality of Clypher. They act as a mediator betwee
 The ``BaseEngine`` class
 ------------------------
 
+.. autoclass:: src.engines.base_engine.BaseEngine
+
 All engines should subclass the ``BaseEngine`` class defined in ``clypher.src.engines.base_engine.py``, as it provides a set of base methods and attributes needed for instantiating and working with File Handlers and Encryptors.
-
-Attributes defined by the ``BaseEngine`` class
-______________________________________________
-
-``password: str``
-
-The password used for key derivation.
-
-``infiles: list[pathlib.Path]``
-
-The list of input files.
-
-``output: Path``
-
-If specified, the directory in which output files are going to be stored.
-
-``force_ow: bool``
-
-If ``True``, force overwriting of output files.
-
-Methods defined by the ``BaseEngine`` class
-___________________________________________
-
-``start_encryption()``
-
-``start_decryption()``
-
-Both start the processing of input files. Once all input files have been processed, the program stops.
 
 How an Engine operates
 ----------------------
@@ -48,10 +22,6 @@ When you call any of the *start methods* outlined above, the Engine class will e
 - **Request a new file from its FileHandler instance:** This results in a file getting popped from its queue, read and returned as ``bytes``.
 - **Send the returned bytes to its Encryptor instance:** The Encryptor will then encrypt or decrypt the file, and return the result as ``bytes``.
 - **Send the bytes back to the FileHandler instance:** The FileHandler will write the output file and prepare the next file in the queue.
-
-.. 
-    #TODO: update this once the api is actually done
-    #TODO: add docs on how to create a new engine and make it available
 
 Occasionally, the Engine will send messages to the console using the CLI API.
 
@@ -76,10 +46,7 @@ The keys in the dictionary represent the command line name of the engine that th
 
 When the CLI parses the ``--engine`` option, its value is passed to the ``import_engine()`` function located in the ``clypher.src.import_handler.import_handler.py`` file.
 
-.. code-block:: python
-
-    def import_engine(engine:str, engine_list: dict = INSTALLED_ENGINES):
-        ...
+.. autofunction:: src.import_handler.import_handler.import_engine
 
 This function looks up the value of the ``engine`` key in the ``engine_list`` dictionary. If the corresponding value is found, it is then parsed and the module name is sent to the ``importlib`` module, which tries to import it.
 
