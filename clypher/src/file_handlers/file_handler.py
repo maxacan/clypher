@@ -36,6 +36,7 @@ class FileHandler(BaseFileHandler):
         self.decrypting = decrypting
         self.file_list = self._generate_file_list(self.file_list)
         self.file_ammount = len(self.file_list)
+        self.recursive = recursive
 
 
     def is_empty(self) -> bool:

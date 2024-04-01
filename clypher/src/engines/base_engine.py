@@ -21,7 +21,9 @@ class BaseEngine(ABC):
         password: str,
         infiles: list[Path],
         output: Path,
-        force_ow: bool
+        force_ow: bool,
+        *args,
+        **kwargs
     ) -> None:
 
         #: The plaintext password provided by the user
