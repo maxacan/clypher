@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Engines &mdash; Clypher 0.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=7f00635f"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="File Handlers" href="filehandlers.html" />
+    <link rel="prev" title="The CLI" href="cli.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Clypher
+          </a>
+              <div class="version">
+                0.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Quick Summary</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro/introduction.html">Introduction to Clypher</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/introduction.html#getting-started">Getting Started</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Inner Workings</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tldr.html">How Clypher Works</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">The CLI</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Engines</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-baseengine-class">The <code class="docutils literal notranslate"><span class="pre">BaseEngine</span></code> class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#engines.base_engine.BaseEngine"><code class="docutils literal notranslate"><span class="pre">BaseEngine</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#engines.base_engine.BaseEngine.plaintext_password"><code class="docutils literal notranslate"><span class="pre">BaseEngine.plaintext_password</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#engines.base_engine.BaseEngine.infiles"><code class="docutils literal notranslate"><span class="pre">BaseEngine.infiles</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#engines.base_engine.BaseEngine.output"><code class="docutils literal notranslate"><span class="pre">BaseEngine.output</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#engines.base_engine.BaseEngine.force_ow"><code class="docutils literal notranslate"><span class="pre">BaseEngine.force_ow</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#engines.base_engine.BaseEngine.start_encryption"><code class="docutils literal notranslate"><span class="pre">BaseEngine.start_encryption()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#engines.base_engine.BaseEngine.start_decryption"><code class="docutils literal notranslate"><span class="pre">BaseEngine.start_decryption()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#how-an-engine-operates">How an Engine operates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-engines-get-imported">How Engines get imported</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-new-engines">Creating new engines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="filehandlers.html">File Handlers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="encryptors.html">Encryptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Concrete Implementations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../concrete-implementations/fernetengine.html">The FernetEngine</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Clypher</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Engines</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/inner-workings/engines.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="engines">
+<span id="id1"></span><h1>Engines<a class="headerlink" href="#engines" title="Link to this heading"></a></h1>
+<p>Engines provide the core functionality of Clypher. They act as a mediator between a <strong>File Handler</strong> class and an <strong>Encryptor</strong> class.</p>
+<section id="the-baseengine-class">
+<h2>The <code class="docutils literal notranslate"><span class="pre">BaseEngine</span></code> class<a class="headerlink" href="#the-baseengine-class" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="engines.base_engine.BaseEngine">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">engines.base_engine.</span></span><span class="sig-name descname"><span class="pre">BaseEngine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">infiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_ow</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#engines.base_engine.BaseEngine" title="Link to this definition"></a></dt>
+<dd><p>A base engine class. Used as a mediator between an Encryptor class and a FileHandler class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>password</strong> (<em>str</em>) – The plaintext password provided by the user.</p></li>
+<li><p><strong>infiles</strong> (<em>list</em><em>[</em><em>Path</em><em>]</em>) – The list of input files.</p></li>
+<li><p><strong>output</strong> (<em>Path</em>) – The output directory.</p></li>
+<li><p><strong>force_ow</strong> (<em>bool</em>) – Force overwriting of output files if they already exist.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="engines.base_engine.BaseEngine.plaintext_password">
+<span class="sig-name descname"><span class="pre">plaintext_password</span></span><a class="headerlink" href="#engines.base_engine.BaseEngine.plaintext_password" title="Link to this definition"></a></dt>
+<dd><p>The plaintext password provided by the user</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="engines.base_engine.BaseEngine.infiles">
+<span class="sig-name descname"><span class="pre">infiles</span></span><a class="headerlink" href="#engines.base_engine.BaseEngine.infiles" title="Link to this definition"></a></dt>
+<dd><p>The list of input files.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="engines.base_engine.BaseEngine.output">
+<span class="sig-name descname"><span class="pre">output</span></span><a class="headerlink" href="#engines.base_engine.BaseEngine.output" title="Link to this definition"></a></dt>
+<dd><p>The output directory.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="engines.base_engine.BaseEngine.force_ow">
+<span class="sig-name descname"><span class="pre">force_ow</span></span><a class="headerlink" href="#engines.base_engine.BaseEngine.force_ow" title="Link to this definition"></a></dt>
+<dd><p>Force overwriting of output files.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="engines.base_engine.BaseEngine.start_encryption">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start_encryption</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#engines.base_engine.BaseEngine.start_encryption" title="Link to this definition"></a></dt>
+<dd><p>Start the encryption of all files. Must be implemented by a concrete Engine class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="engines.base_engine.BaseEngine.start_decryption">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start_decryption</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#engines.base_engine.BaseEngine.start_decryption" title="Link to this definition"></a></dt>
+<dd><p>Start the decryption of all files. Must be implemented by a concrete Engine class.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>All engines should subclass the <code class="docutils literal notranslate"><span class="pre">BaseEngine</span></code> class defined in <code class="docutils literal notranslate"><span class="pre">clypher.src.engines.base_engine.py</span></code>, as it provides a set of base methods and attributes needed for instantiating and working with File Handlers and Encryptors.</p>
+</section>
+<section id="how-an-engine-operates">
+<h2>How an Engine operates<a class="headerlink" href="#how-an-engine-operates" title="Link to this heading"></a></h2>
+<p>Engines instantiate both a <strong>File Handler</strong> and an <strong>Encryptor</strong> instance, passing any arguments that they might require.</p>
+<p>When you call any of the <em>start methods</em> outlined above, the Engine class will execute the following three base steps:</p>
+<ul class="simple">
+<li><p><strong>Request a new file from its FileHandler instance:</strong> This results in a file getting popped from its queue, read and returned as <code class="docutils literal notranslate"><span class="pre">bytes</span></code>.</p></li>
+<li><p><strong>Send the returned bytes to its Encryptor instance:</strong> The Encryptor will then encrypt or decrypt the file, and return the result as <code class="docutils literal notranslate"><span class="pre">bytes</span></code>.</p></li>
+<li><p><strong>Send the bytes back to the FileHandler instance:</strong> The FileHandler will write the output file and prepare the next file in the queue.</p></li>
+</ul>
+<p>Occasionally, the Engine will send messages to the console using the CLI API.</p>
+</section>
+<section id="how-engines-get-imported">
+<h2>How Engines get imported<a class="headerlink" href="#how-engines-get-imported" title="Link to this heading"></a></h2>
+<p>Clypher was designed to enable easy integration of new engines, allowing for a nearly drag-and-drop experience.</p>
+<p>Because the program allows for choosing an engine at runtime, importing all available engines results in, potentially, lots of unnecesary code being loaded. A simple on-the-fly import system was implemented to help mitigate this.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">engines</span></code> module houses all available engines, along with the <code class="docutils literal notranslate"><span class="pre">INSTALLED_ENGINES</span></code> constant located in <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code>. Here is a quick look at its contents:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">INSTALLED_ENGINES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;fernet&quot;</span><span class="p">:</span> <span class="s2">&quot;src.engines.fernet_engine.FernetEngine&quot;</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The keys in the dictionary represent the command line name of the engine that the user passes to the <code class="docutils literal notranslate"><span class="pre">--engine</span></code> option in the CLI. The values represent the path to the actual engine class.</p>
+<p>When the CLI parses the <code class="docutils literal notranslate"><span class="pre">--engine</span></code> option, its value is passed to the <code class="docutils literal notranslate"><span class="pre">import_engine()</span></code> function located in the <code class="docutils literal notranslate"><span class="pre">clypher.src.import_handler.import_handler.py</span></code> file.</p>
+<p>This function looks up the value of the <code class="docutils literal notranslate"><span class="pre">engine</span></code> key in the <code class="docutils literal notranslate"><span class="pre">engine_list</span></code> dictionary. If the corresponding value is found, it is then parsed and the module name is sent to the <code class="docutils literal notranslate"><span class="pre">importlib</span></code> module, which tries to import it.</p>
+<p>If the import succeeds, a simple <code class="docutils literal notranslate"><span class="pre">getattr()</span></code> call is made to get the actual engine class. If the call succeeds, the engine class is returned.</p>
+<p>If something fails, such as a missing engine class or an engine that doesn’t exist is supplied, the <code class="docutils literal notranslate"><span class="pre">import_engine</span></code> function raises the appropiate exception and Clypher exits.</p>
+</section>
+<section id="creating-new-engines">
+<h2>Creating new engines<a class="headerlink" href="#creating-new-engines" title="Link to this heading"></a></h2>
+<p>Once you’ve programmed your new engine, installing it is as easy as adding an entry to the <code class="docutils literal notranslate"><span class="pre">INSTALLED_ENGINES</span></code> dictionary.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">INSTALLED_ENGINES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;fernet&quot;</span><span class="p">:</span> <span class="s2">&quot;src.engines.fernet_engine.FernetEngine&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;new_engine&quot;</span><span class="p">:</span> <span class="s2">&quot;src.engines.new_engine.NewEngine&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Because <code class="docutils literal notranslate"><span class="pre">importlib</span></code> is used to import the engine, the value of the new entry <strong>must be a valid Python module</strong>. Otherwise, importing it might fail.</p>
+<p>Also, engine names <strong>CANNOT</strong> have words separated by whitespace, as the CLI will interpret them as different arguments.</p>
+</div>
+<p>Once installed, it can be used via the CLI:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python3<span class="w"> </span>-m<span class="w"> </span>clypher<span class="w"> </span>enc<span class="w"> </span>foo.txt<span class="w"> </span>--engine<span class="w"> </span>new_engine
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cli.html" class="btn btn-neutral float-left" title="The CLI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="filehandlers.html" class="btn btn-neutral float-right" title="File Handlers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Maximiliano Cancelarich.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

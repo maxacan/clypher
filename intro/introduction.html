@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Introduction to Clypher &mdash; Clypher 0.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=7f00635f"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="How Clypher Works" href="../inner-workings/tldr.html" />
+    <link rel="prev" title="Welcome to Clypher’s documentation!" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Clypher
+          </a>
+              <div class="version">
+                0.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Quick Summary</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction to Clypher</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#getting-started">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cli-usage">CLI Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#specifying-input-files">Specifying input files</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#recursively-adding-input-files">Recursively adding input files</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#specifying-an-output-directory">Specifying an output directory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#specifying-a-password">Specifying a password</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#overwriting-files">Overwriting files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#specifying-an-engine">Specifying an engine</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Inner Workings</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../inner-workings/tldr.html">How Clypher Works</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inner-workings/cli.html">The CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inner-workings/engines.html">Engines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inner-workings/filehandlers.html">File Handlers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inner-workings/encryptors.html">Encryptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inner-workings/logging.html">Logging</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Concrete Implementations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../concrete-implementations/fernetengine.html">The FernetEngine</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Clypher</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Introduction to Clypher</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/intro/introduction.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="introduction-to-clypher">
+<h1>Introduction to Clypher<a class="headerlink" href="#introduction-to-clypher" title="Link to this heading"></a></h1>
+<p><strong>Clypher</strong> is a small Python program that allows you to encrypt and decrypt files via a simple CLI interface.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This project is intended as a little personal project, and not as an actual secure solution for file encryption.</p>
+<p>If you’re looking for a secure solution for storing sensitive files, look for other utilities, such as <a class="reference external" href="https://www.veracrypt.fr/code/VeraCrypt/">VeraCrypt</a>.</p>
+<p>I cannot guarantee security, so only use this for low-security applications.</p>
+</div>
+</section>
+<section id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h1>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<p>To use Clypher, first install it using <strong>pip</strong>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>clypher
+</pre></div>
+</div>
+<p>Alternatively, you can install it as a package in editable mode using <strong>pip -e</strong>.</p>
+<ol class="arabic simple">
+<li><p>Navigate to the <em>project’s root directory</em>. (Where <code class="docutils literal notranslate"><span class="pre">proyect.toml</span></code> is located.)</p></li>
+<li><p>Install Clypher using <strong>pip</strong>:</p></li>
+</ol>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</pre></div>
+</div>
+<p>To check that everything went well, you can run the <code class="docutils literal notranslate"><span class="pre">--version</span></code> command.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python3<span class="w"> </span>-m<span class="w"> </span>clypher<span class="w"> </span>version
+</pre></div>
+</div>
+<p>This should output “Clypher v 0.4”. If it does, then the installation succeeded.</p>
+</section>
+<section id="cli-usage">
+<h2>CLI Usage<a class="headerlink" href="#cli-usage" title="Link to this heading"></a></h2>
+<p>You interact with Clypher via command line arguments. If you’ve installed Clypher system-wide, you can just call it from the terminal:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python3<span class="w"> </span>-m<span class="w"> </span>clypher
+</pre></div>
+</div>
+<p>To display a list of available arguments, run the <code class="docutils literal notranslate"><span class="pre">--help</span></code> command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python3<span class="w"> </span>-m<span class="w"> </span>clypher<span class="w"> </span>--help
+</pre></div>
+</div>
+<p>This will display a list of all available commands, as well as a short description of each one.</p>
+<p>You can get more information about a command, such as a detailed description and the arguments it takes, by adding <code class="docutils literal notranslate"><span class="pre">--help</span></code> after it:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python3<span class="w"> </span>-m<span class="w"> </span>clypher<span class="w"> </span>enc<span class="w"> </span>--help
+</pre></div>
+</div>
+<section id="specifying-input-files">
+<h3>Specifying input files<a class="headerlink" href="#specifying-input-files" title="Link to this heading"></a></h3>
+<p>Both the <code class="docutils literal notranslate"><span class="pre">enc</span></code> and <code class="docutils literal notranslate"><span class="pre">dec</span></code> commands can take one or more input files or directories. Just pass them as arguments to said commands:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python3<span class="w"> </span>-m<span class="w"> </span>clypher<span class="w"> </span>enc<span class="w"> </span>foo.txt
+
+<span class="gp">$ </span>python3<span class="w"> </span>-m<span class="w"> </span>clypher<span class="w"> </span>dec<span class="w"> </span>foo.txt<span class="w"> </span>./baz/
+</pre></div>
+</div>
+<p>By default, Clypher ignores any duplicate input files. If the same file is passed as an input multiple times, it will only be processed once.</p>
+<section id="recursively-adding-input-files">
+<h4>Recursively adding input files<a class="headerlink" href="#recursively-adding-input-files" title="Link to this heading"></a></h4>
+<p>If you use the <code class="docutils literal notranslate"><span class="pre">--recursive</span></code> option, Clypher will recursively walk any input directories, adding every single file to the input list. <strong>Use with caution.</strong></p>
+<p>It is recommended you use it along with the <code class="docutils literal notranslate"><span class="pre">--out</span></code> option.</p>
+</section>
+</section>
+<section id="specifying-an-output-directory">
+<h3>Specifying an output directory<a class="headerlink" href="#specifying-an-output-directory" title="Link to this heading"></a></h3>
+<p>By default, Clypher places any output files in the same directory as their source files. However, you can override this by using the <code class="docutils literal notranslate"><span class="pre">--out</span></code> option. Simply specify the desired output directory after the option, and Clypher will save all files to that directory:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python3<span class="w"> </span>-m<span class="w"> </span>clypher<span class="w"> </span>foo.txt<span class="w"> </span>--out<span class="w"> </span>./encrypted-foo/
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Specifying an <code class="docutils literal notranslate"><span class="pre">--out</span></code> directory will place <strong>all</strong> output files in that directory.</p>
+<p>As of version 0.4, creating new directories, and/or duplicating the structure (as in creating any subfolders) of an input directory is not supported.</p>
+<p>If the output directory does not exist, or the program lacks write privileges, Clypher <strong>will fail</strong>.</p>
+</div>
+</section>
+<section id="specifying-a-password">
+<h3>Specifying a password<a class="headerlink" href="#specifying-a-password" title="Link to this heading"></a></h3>
+<p>By default, Clypher will ask you to enter a password before encrypting or decrypting a file.</p>
+<p>You can pass a password as an argument by using the <code class="docutils literal notranslate"><span class="pre">--pass</span></code> option:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python3<span class="w"> </span>-m<span class="w"> </span>clypher<span class="w"> </span>enc<span class="w"> </span>foo.txt<span class="w"> </span>--pass<span class="w"> </span>supersecretpassword1234
+</pre></div>
+</div>
+<p>There are a few things to keep in mind about passwords:</p>
+<ul class="simple">
+<li><p>When a password is specified, either by passing it as an argument or entering it when prompted by the program, <strong>it is applied for all input files.</strong> Currently, multiple passwords are not supported.</p></li>
+<li><p>As of version 0.4, <strong>Clypher does not enforce a specific password format</strong>. You can use as many or as few characters as you want. As long as they are all printable ASCII characters, it <em>should</em> work.</p></li>
+</ul>
+</section>
+<section id="overwriting-files">
+<h3>Overwriting files<a class="headerlink" href="#overwriting-files" title="Link to this heading"></a></h3>
+<p>Clypher will throw an error if an output file already exists. To force the program to overwrite any conflicting files, simply pass the <code class="docutils literal notranslate"><span class="pre">--fo</span></code> option.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python3<span class="w"> </span>-m<span class="w"> </span>clypher<span class="w"> </span>enc<span class="w"> </span>foo.txt<span class="w"> </span>--fo
+</pre></div>
+</div>
+</section>
+<section id="specifying-an-engine">
+<h3>Specifying an engine<a class="headerlink" href="#specifying-an-engine" title="Link to this heading"></a></h3>
+<p>Clypher can use different <em>engines</em> to process files. To specify an engine, use the <code class="docutils literal notranslate"><span class="pre">--engine</span></code> option, followed by the name of the engine you want to use:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python3<span class="w"> </span>-m<span class="w"> </span>clypher<span class="w"> </span>enc<span class="w"> </span>foo.txt<span class="w"> </span>--engine<span class="w"> </span>fernet
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As of version 0.4, the only available engine is the <em>FernetEngine</em>. It is used as the default engine.</p>
+</div>
+<p>You can learn more about engines in the <a class="reference internal" href="../inner-workings/engines.html#engines"><span class="std std-ref">Engines</span></a> documentation.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to Clypher’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../inner-workings/tldr.html" class="btn btn-neutral float-right" title="How Clypher Works" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Maximiliano Cancelarich.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

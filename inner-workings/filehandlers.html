@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>File Handlers &mdash; Clypher 0.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=7f00635f"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Encryptors" href="encryptors.html" />
+    <link rel="prev" title="Engines" href="engines.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Clypher
+          </a>
+              <div class="version">
+                0.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Quick Summary</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro/introduction.html">Introduction to Clypher</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/introduction.html#getting-started">Getting Started</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Inner Workings</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tldr.html">How Clypher Works</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">The CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="engines.html">Engines</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">File Handlers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-basefilehandler-class">The <code class="docutils literal notranslate"><span class="pre">BaseFileHandler</span></code> class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#file_handlers.base_filehandler.BaseFileHandler"><code class="docutils literal notranslate"><span class="pre">BaseFileHandler</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#file_handlers.base_filehandler.BaseFileHandler.file_list"><code class="docutils literal notranslate"><span class="pre">BaseFileHandler.file_list</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#file_handlers.base_filehandler.BaseFileHandler.out"><code class="docutils literal notranslate"><span class="pre">BaseFileHandler.out</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#file_handlers.base_filehandler.BaseFileHandler.force_ow"><code class="docutils literal notranslate"><span class="pre">BaseFileHandler.force_ow</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#file_handlers.base_filehandler.BaseFileHandler.list_files"><code class="docutils literal notranslate"><span class="pre">BaseFileHandler.list_files()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#file_handlers.base_filehandler.BaseFileHandler.request"><code class="docutils literal notranslate"><span class="pre">BaseFileHandler.request()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#file_handlers.base_filehandler.BaseFileHandler.write"><code class="docutils literal notranslate"><span class="pre">BaseFileHandler.write()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#adding-new-file-handlers">Adding new File Handlers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="encryptors.html">Encryptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Concrete Implementations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../concrete-implementations/fernetengine.html">The FernetEngine</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Clypher</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">File Handlers</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/inner-workings/filehandlers.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="file-handlers">
+<h1>File Handlers<a class="headerlink" href="#file-handlers" title="Link to this heading"></a></h1>
+<p>As their name implies, <strong>File Handlers</strong> deal with <em>file operations</em>. They manage reading input files and writing output files, along with dealing with naming and interpreting different file structures.</p>
+<section id="the-basefilehandler-class">
+<h2>The <code class="docutils literal notranslate"><span class="pre">BaseFileHandler</span></code> class<a class="headerlink" href="#the-basefilehandler-class" title="Link to this heading"></a></h2>
+<p>As with engines, File Handlers subclass the <code class="docutils literal notranslate"><span class="pre">BaseFileHandler</span></code> class found in <code class="docutils literal notranslate"><span class="pre">clypher.src.file_handlers.base_filehandler.py</span></code>, which provides a simple interface for common operations, such as reading and writing files.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="file_handlers.base_filehandler.BaseFileHandler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">file_handlers.base_filehandler.</span></span><span class="sig-name descname"><span class="pre">BaseFileHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#file_handlers.base_filehandler.BaseFileHandler" title="Link to this definition"></a></dt>
+<dd><p>Provides a simple base interface for new file handlers.
+Resolves all input paths and converts them into absolute paths.</p>
+<p>Can also recursively walk a directory, adding all its files to the input.</p>
+<p>Is also able to resolve relative input paths such as “ <strong>.</strong> “ and “<strong>../foo</strong>”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>files</strong> (<em>list</em><em>[</em><em>Path</em><em>]</em>) – The list of input paths coming from the CLI.</p></li>
+<li><p><strong>output_dir</strong> (<em>Path</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – The output directory, defaults to the current working dir.</p></li>
+<li><p><strong>force_overwrite</strong> (<em>bool</em><em>, </em><em>optional</em>) – Force overwriting output files, defaults to True.</p></li>
+<li><p><strong>recursive</strong> (<em>bool</em><em>, </em><em>optional</em>) – Recursively walk all input directories,
+adding all files to the input, default to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>FileNotFoundError</strong> – If any input path, or the output directory, doesn’t exist.</p></li>
+<li><p><strong>ValueError</strong> – If the output directory is a file.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="file_handlers.base_filehandler.BaseFileHandler.file_list">
+<span class="sig-name descname"><span class="pre">file_list</span></span><a class="headerlink" href="#file_handlers.base_filehandler.BaseFileHandler.file_list" title="Link to this definition"></a></dt>
+<dd><p>The list of input files. Every entry is an absolute path.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="file_handlers.base_filehandler.BaseFileHandler.out">
+<span class="sig-name descname"><span class="pre">out</span></span><a class="headerlink" href="#file_handlers.base_filehandler.BaseFileHandler.out" title="Link to this definition"></a></dt>
+<dd><p>Output directory.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="file_handlers.base_filehandler.BaseFileHandler.force_ow">
+<span class="sig-name descname"><span class="pre">force_ow</span></span><a class="headerlink" href="#file_handlers.base_filehandler.BaseFileHandler.force_ow" title="Link to this definition"></a></dt>
+<dd><p>Force overwriting of output files.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="file_handlers.base_filehandler.BaseFileHandler.list_files">
+<span class="sig-name descname"><span class="pre">list_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#file_handlers.base_filehandler.BaseFileHandler.list_files" title="Link to this definition"></a></dt>
+<dd><p>List all the files in the current directory and return a list of absolute paths.
+If recursive, recursively walk the directory, listing all files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>Path</em>) – The path to list all files from.</p></li>
+<li><p><strong>recursive</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, recursively walk the directory, adding all files to the input.
+(default is False)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of absolute paths.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[Path]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="file_handlers.base_filehandler.BaseFileHandler.request">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">request</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#file_handlers.base_filehandler.BaseFileHandler.request" title="Link to this definition"></a></dt>
+<dd><p>Return the next file to process. Must be implemented by a concrete class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="file_handlers.base_filehandler.BaseFileHandler.write">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#file_handlers.base_filehandler.BaseFileHandler.write" title="Link to this definition"></a></dt>
+<dd><p>Given bytes, write them to a file. Must be implemented by a concrete class.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="adding-new-file-handlers">
+<h2>Adding new File Handlers<a class="headerlink" href="#adding-new-file-handlers" title="Link to this heading"></a></h2>
+<p>While it is uncertain whether future versions might continue to work this way, right now, any File Handler that subclassess <code class="docutils literal notranslate"><span class="pre">BaseFileHandler</span></code> and  implements a <code class="docutils literal notranslate"><span class="pre">request()</span></code> and a <code class="docutils literal notranslate"><span class="pre">write()</span></code> method will be considered valid.</p>
+<p>The only convention is for <code class="docutils literal notranslate"><span class="pre">request()</span></code> to return <code class="docutils literal notranslate"><span class="pre">bytes</span></code>, how it achieves this is completely up to you.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="engines.html" class="btn btn-neutral float-left" title="Engines" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="encryptors.html" class="btn btn-neutral float-right" title="Encryptors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Maximiliano Cancelarich.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

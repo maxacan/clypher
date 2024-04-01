@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The CLI &mdash; Clypher 0.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=7f00635f"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Engines" href="engines.html" />
+    <link rel="prev" title="How Clypher Works" href="tldr.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Clypher
+          </a>
+              <div class="version">
+                0.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Quick Summary</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro/introduction.html">Introduction to Clypher</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/introduction.html#getting-started">Getting Started</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Inner Workings</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tldr.html">How Clypher Works</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">The CLI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-consolemanager">The <code class="docutils literal notranslate"><span class="pre">ConsoleManager</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-progressmanager">The <code class="docutils literal notranslate"><span class="pre">ProgressManager</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="engines.html">Engines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filehandlers.html">File Handlers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="encryptors.html">Encryptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Concrete Implementations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../concrete-implementations/fernetengine.html">The FernetEngine</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Clypher</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">The CLI</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/inner-workings/cli.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="the-cli">
+<h1>The CLI<a class="headerlink" href="#the-cli" title="Link to this heading"></a></h1>
+<p>The <strong>Command Line Interface</strong>, powered by <a class="reference external" href="https://typer.tiangolo.com/">Typer</a> and <a class="reference external" href="https://github.com/Textualize/rich">Rich</a>, provides a very simple API for managing arguments and printing to the console.</p>
+<p>When the app is invoked, the function associated with the specified argument is called. Both the <code class="docutils literal notranslate"><span class="pre">enc</span></code> and <code class="docutils literal notranslate"><span class="pre">dec</span></code> then functions read the arguments passed to the program.</p>
+<p>If the <code class="docutils literal notranslate"><span class="pre">--pass</span></code> option is not used, the CLI will ask the user for a password.</p>
+<p>Once the password is set, the CLI will try to import the engine needed for processing the files. If not explicitly set, the <code class="docutils literal notranslate"><span class="pre">--engine</span></code> option will default to <code class="docutils literal notranslate"><span class="pre">fernet</span></code>.</p>
+<p>If the import succeeds, the CLI will create an instance of the imported engine and pass it all of the arguments that are deemed necessary.</p>
+<section id="the-consolemanager">
+<h2>The <code class="docutils literal notranslate"><span class="pre">ConsoleManager</span></code><a class="headerlink" href="#the-consolemanager" title="Link to this heading"></a></h2>
+<p>Clypher uses a <code class="docutils literal notranslate"><span class="pre">ConsoleManager</span></code> class that provides a bunch of static methods for printing common messages, such as warnings, errors, success messages, etc.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">ConsoleManager</span></code> class found in the <code class="docutils literal notranslate"><span class="pre">src.cli.managers.py</span></code> file is a very thin wrapper of the Rich <a class="reference external" href="https://rich.readthedocs.io/en/stable/console.html">Console API</a>.</p>
+</section>
+<section id="the-progressmanager">
+<h2>The <code class="docutils literal notranslate"><span class="pre">ProgressManager</span></code><a class="headerlink" href="#the-progressmanager" title="Link to this heading"></a></h2>
+<p>To display progress bars, Clypher uses Rich’s <a class="reference external" href="https://rich.readthedocs.io/en/stable/progress.html">Progress</a> class.</p>
+<p>To simplify its use, the <code class="docutils literal notranslate"><span class="pre">ProgressManager</span></code> class provides a single <code class="docutils literal notranslate"><span class="pre">step()</span></code> method, which advances the progress bar depending on how many files are left.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>An actual CLI implementation is being worked on. Nothing described in this page is final and will probably change in the near future.</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tldr.html" class="btn btn-neutral float-left" title="How Clypher Works" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="engines.html" class="btn btn-neutral float-right" title="Engines" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Maximiliano Cancelarich.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
