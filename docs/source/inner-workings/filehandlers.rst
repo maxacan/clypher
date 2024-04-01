@@ -3,44 +3,13 @@ File Handlers
 
 As their name implies, **File Handlers** deal with *file operations*. They manage reading input files and writing output files, along with dealing with naming and interpreting different file structures.
 
-.. 
-    #TODO: Add docs when a base file handler is implemented.
-
 The ``BaseFileHandler`` class
 -----------------------------
 
 As with engines, File Handlers subclass the ``BaseFileHandler`` class found in ``clypher.src.file_handlers.base_filehandler.py``, which provides a simple interface for common operations, such as reading and writing files.
 
-Attributes defined by the ``BaseFileHandler`` class
-___________________________________________________
+.. autoclass:: src.file_handlers.base_filehandler.BaseFileHandler
 
-``file_list: list[pathlib.Path]``
-
-The list of input files.
-
-``out: pathlib.Path | None``
-
-The output directory.
-
-``force_ow: bool``
-
-Force overwriting of output files.
-
-``decrypting: bool``
-
-Selects the working mode of the handler, as encrypting and decrypting might need different read/write behaviours.
-
-
-Methods defined by the ``BaseFileHandler`` class
-________________________________________________
-
-``request() -> bytes | None``
-
-Read the next file and return it as ``bytes``. If no more files are available, return ``None``.
-
-``write(data: bytes) -> int``
-
-Take ``data`` and write it to its corresponding output file. Return the number of bytes written as reported by the ``io.TextIOBase.write()`` method from the Python Standard Library.
 
 Adding new File Handlers
 ------------------------

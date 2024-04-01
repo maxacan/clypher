@@ -5,7 +5,13 @@ def import_engine(engine:str, engine_list: dict = INSTALLED_ENGINES):
     """
     Given a string engine, return the engine class that it represents.
 
-    Raise ImportError if the engine cannot be imported.
+    :param engine: The command-line name of the engine, specified by the user.
+    :type engine: str
+    :param engine_list: A dictionary containing the list of installed engines, defaults to INSTALLED_ENGINES.
+    :type engine: dict, optional
+    :raise AttributeError: If the specified engine module exists, but the Engine class doesn't.
+    :raise ImportError: If the engine cannot be imported.
+    :raise KeyError: If the specified engine module doesn't exist.
     """
 
     try:

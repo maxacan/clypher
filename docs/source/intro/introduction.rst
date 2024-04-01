@@ -75,16 +75,23 @@ You can get more information about a command, such as a detailed description and
 Specifying input files
 ++++++++++++++++++++++
 
-Both the ``enc`` and ``dec`` commands can take one or more input files. Just pass them as arguments to said commands:
+Both the ``enc`` and ``dec`` commands can take one or more input files or directories. Just pass them as arguments to said commands:
 
 .. code-block:: console
 
     $ python3 -m clypher enc foo.txt
 
-    $ python3 -m clypher dec foo.txt ./baz/bar.txt 
+    $ python3 -m clypher dec foo.txt ./baz/
 
 
 By default, Clypher ignores any duplicate input files. If the same file is passed as an input multiple times, it will only be processed once.
+
+Recursively adding input files
+______________________________
+
+If you use the ``--recursive`` option, Clypher will recursively walk any input directories, adding every single file to the input list. **Use with caution.**
+
+It is recommended you use it along with the ``--out`` option.
 
 
 Specifying an output directory
@@ -100,7 +107,9 @@ By default, Clypher places any output files in the same directory as their sourc
     #TODO: Change this if/when multiple output directories are supported.
 
 .. note:: 
-    Specifying an ``--out`` directory will place **all** output files in that directory. As of version |version|, multiple output directories are not supported.
+    Specifying an ``--out`` directory will place **all** output files in that directory.
+
+    As of version |version|, creating new directories, and/or duplicating the structure (as in creating any subfolders) of an input directory is not supported.
 
     If the output directory does not exist, or the program lacks write privileges, Clypher **will fail**.
 

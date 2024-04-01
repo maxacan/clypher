@@ -24,79 +24,144 @@ class FernetEngine(BaseEngine):
             files=self.infiles,
             output_dir=self.output,
             force_overwrite=self.force_ow,
-            decrypting=decrypting
+            decrypting=decrypting,
+            recursive=kwargs.get("recursive", False)
         )
+
+    def _recursion_confirmation(self) -> bool:
+        """
+        Display the list of files to be processed if the program is running in recursive mode.
+        After that, display a confirmation prompt to the user. Return the answer.
+        """
+
+        if self.__fhandler.recursive:
+            CONSOLE.warn(
+                f"Recursive mode is on, take a look at the list of files to be processed:")
+
+            for file_, _ in self.__fhandler.file_list:
+                CONSOLE.info(str(file_), show_tag=False)
+
+            return CONSOLE.confirm("Do you want to proceed with the operation? ")
 
     def start_encryption(self):
-        CONSOLE.info(f"Starting encryption. {self.__fhandler.file_ammount} files to encrypt.\n")
-        files_processed = 0
 
-        progress_indicator = PM(
-            "[cyan]Encrypting...[/cyan]",
-            self.__fhandler.file_ammount
-        )
+        if not self._recursion_confirmation():
+            LOG.info(f"User aborted encryption after reading recursive file list.")
+            CONSOLE.info(f"Aborting..")
+            return
+
+        CONSOLE.info(
+            f"Starting encryption. {self.__fhandler.file_ammount} files to encrypt.\n")
+        LOG.info(
+            f"Starting encryption... {self.__fhandler.file_ammount} files to encrypt.")
+        files_processed = 0
+        files_skipped = 0
 
         try:
-            with progress_indicator.progress:
+            with PM("[cyan]Encrypting...[/cyan]", self.__fhandler.file_ammount) as progress:
 
-                while (file_ := self.__fhandler.request()):
-                    progress_indicator.step(self.__fhandler.currfile)
+                file_ = self.__fhandler.request()
 
+                while file_ is not None:
 
-                    LOG.info(f"Encrypting file {self.__fhandler.currfile}...")
+                    if len(file_) == 0:
+                        progress.step(
+                            f"{self.__fhandler.currfile} is empty. Skipping...")
 
-                    self.__fhandler.write(
-                        self.__encryptor.encrypt(
-                            file_
+                        files_skipped += 1
+
+                        LOG.info(
+                            f"{self.__fhandler.currfile} is empty. Skipping...")
+
+                    else:
+                        progress.step(self.__fhandler.currfile)
+
+                        LOG.info(
+                            f"Encrypting file {self.__fhandler.currfile}...")
+
+                        self.__fhandler.write(
+                            self.__encryptor.encrypt(
+                                file_
+                            )
                         )
-                    )
 
-                    files_processed += 1
+                        files_processed += 1
 
-                    LOG.info(f"Done")
+                        LOG.info(f"Done")
+
+                    file_ = self.__fhandler.request()
 
         except KeyboardInterrupt:
-            CONSOLE.warn(f"Stopped encryption after {files_processed} files.\n")
+            CONSOLE.warn(
+                f"Stopped encryption after {files_processed + files_skipped} files.\n")
 
-        if files_processed > 0:
-            CONSOLE.success(f"Successfully encrypted {files_processed} files.\n")
+        if files_processed > 0 or files_skipped > 0:
+            CONSOLE.success(
+                f"Successfully encrypted {files_processed} files. {files_skipped} skipped.\n")
 
     def start_decryption(self):
-        CONSOLE.info(f"Starting decryption. {self.__fhandler.file_ammount} files to decrypt.\n")
+
+        if not self._recursion_confirmation():
+            LOG.info(f"User aborted decryption after reading recursive file list.")
+            CONSOLE.info(f"Aborting..")
+            return
+
+        if self.__fhandler.is_empty():
+            CONSOLE.info(
+                f"No encrypted files found. Are you sure they have a .clypher extension?")
+            return
+
+        CONSOLE.info(
+            f"Starting decryption. {self.__fhandler.file_ammount} files to decrypt.\n")
         files_processed = 0
+        files_skipped = 0
 
-        progress_indicator = PM(
-            "[cyan]Dencrypting...[/cyan]",
-            self.__fhandler.file_ammount
-        )
+        try:
+            with PM("[cyan]Dencrypting...[/cyan]", self.__fhandler.file_ammount) as progress:
 
-        with progress_indicator.progress:
-            while (file_ := self.__fhandler.request()):
-                try:
-                    progress_indicator.step(self.__fhandler.currfile)
+                file_ = self.__fhandler.request()
 
-                    LOG.info(f"Decrypting file {self.__fhandler.currfile}...")
+                while file_ is not None:
 
-                    self.__fhandler.write(
-                        self.__encryptor.decrypt(
-                            file_
+                    if len(file_) == 0:
+                        progress.step(
+                            f"{self.__fhandler.currfile} is empty. Skipping...")
+
+                        files_skipped += 1
+
+                        LOG.info(
+                            f"{self.__fhandler.currfile} is empty. Skipping...")
+
+                    else:
+                        progress.step(self.__fhandler.currfile)
+
+                        LOG.info(
+                            f"Decrypting file {self.__fhandler.currfile}...")
+
+                        self.__fhandler.write(
+                            self.__encryptor.decrypt(
+                                file_
+                            )
                         )
-                    )
 
-                    files_processed += 1
+                        files_processed += 1
 
-                    LOG.info(f"Done.")
-                except KeyboardInterrupt:
-                    CONSOLE.warn(f"Stopped decryption after {files_processed} files.")
+                        LOG.info(f"Done")
 
-                except (InvalidSignature, InvalidToken):
-                    progress_indicator.progress.stop()
-                    CONSOLE.error(
-                        (
-                         "The specified file doesn't appear to have been encrypted with the Fernet engine,"
-                         " or the specified password is incorrect."
-                        )
-                    )
+                    file_ = self.__fhandler.request()
+
+        except KeyboardInterrupt:
+            CONSOLE.warn(
+                f"Stopped decryption after {files_processed + files_skipped} files.")
+
+        except (InvalidSignature, InvalidToken):
+            progress.stop()
+            CONSOLE.error(
+                (
+                    "The specified file doesn't appear to have been encrypted with the Fernet engine,"
+                    " or the specified password is incorrect."
+                )
+            )
 
         if files_processed > 0:
             CONSOLE.success(f"Successfully decrypted {files_processed} files.")

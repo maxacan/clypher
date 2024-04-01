@@ -100,7 +100,7 @@ class TestFileHandler:
         """
         On decryption, the file handler should delete the .clypher extension.
         """
-        infile = tmp_path / "encrypted.txt.clyper"
+        infile = tmp_path / "encrypted.txt.clypher"
         infile.write_bytes(b"f91j2949s")
 
         fh = FileHandler(
@@ -111,22 +111,6 @@ class TestFileHandler:
         fh.request()
 
         assert fh.output_filepath == tmp_path / "encrypted.txt"
-
-    def test_fails_when_input_is_directory(self, tmp_path):
-        """
-        Make sure the base file handler fails if the input is a directory, as they are
-        not supported yet.
-
-        ! Delete test when support for directories is added. !
-        """
-        directory = tmp_path / "testdir"
-
-        directory.mkdir()
-
-        with pytest.raises(NotImplementedError):
-            FileHandler(
-                files=[directory]
-            )
 
     def test_writes_output_file_correctly(self, create_infile, tmp_path):
         """
@@ -185,7 +169,7 @@ class TestFileHandler:
         """
         infile, outfile = create_file_pair
 
-        with pytest.raises(TypeError):
+        with pytest.raises(ValueError):
             FileHandler(
                 files=[infile],
                 output_dir=outfile,
