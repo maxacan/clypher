@@ -1,4 +1,4 @@
-from clypher.src.import_handler.import_handler import import_engine
+from import_handler.import_handler import import_engine
 import pytest
 
 

@@ -25,8 +25,8 @@ import logging
 
 from os import environ
 
-from src.cli.managers import ConsoleManager as CONSOLE
-from src.cli.main import app
+from cli.managers import ConsoleManager as CONSOLE
+from cli.main import app
 
 debug = environ.get("CLYPHER_DEBUG", False)
 

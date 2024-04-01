@@ -1,5 +1,5 @@
-from src.encryptors.base_encryptor import BaseEncryptor
-from src.logging_config.logger_config import get_logger_or_debug
+from encryptors.base_encryptor import BaseEncryptor
+from logging_config.logger_config import get_logger_or_debug
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 from os import urandom

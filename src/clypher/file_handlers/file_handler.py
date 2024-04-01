@@ -6,9 +6,9 @@ from os.path import (
 
 from pathlib import Path
 from _version import __version__
-from src.logging_config.logger_config import get_logger_or_debug
-from src.file_handlers.base_filehandler import BaseFileHandler
-from src.cli.managers import ConsoleManager as CONSOLE
+from logging_config.logger_config import get_logger_or_debug
+from file_handlers.base_filehandler import BaseFileHandler
+from cli.managers import ConsoleManager as CONSOLE
 
 
 LOG = get_logger_or_debug(__name__)

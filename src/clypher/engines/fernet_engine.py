@@ -1,8 +1,8 @@
-from src.encryptors.fernet_encryptor import FernetEncryptor
-from src.logging_config.logger_config import get_logger_or_debug
-from src.file_handlers.file_handler import FileHandler
-from src.cli.managers import ConsoleManager as CONSOLE
-from src.cli.managers import ProgressManager as PM
+from encryptors.fernet_encryptor import FernetEncryptor
+from logging_config.logger_config import get_logger_or_debug
+from file_handlers.file_handler import FileHandler
+from cli.managers import ConsoleManager as CONSOLE
+from cli.managers import ProgressManager as PM
 from .base_engine import BaseEngine
 
 from cryptography.exceptions import InvalidSignature
@@ -42,6 +42,8 @@ class FernetEngine(BaseEngine):
                 CONSOLE.info(str(file_), show_tag=False)
 
             return CONSOLE.confirm("Do you want to proceed with the operation? ")
+        
+        else: return True
 
     def start_encryption(self):
 
@@ -57,15 +59,16 @@ class FernetEngine(BaseEngine):
         files_processed = 0
         files_skipped = 0
 
+        progress_manager = PM("[cyan]Encrypting...[/cyan]", self.__fhandler.file_ammount)
         try:
-            with PM("[cyan]Encrypting...[/cyan]", self.__fhandler.file_ammount) as progress:
+            with progress_manager.progress:
 
                 file_ = self.__fhandler.request()
 
                 while file_ is not None:
 
                     if len(file_) == 0:
-                        progress.step(
+                        progress_manager.step(
                             f"{self.__fhandler.currfile} is empty. Skipping...")
 
                         files_skipped += 1
@@ -74,7 +77,7 @@ class FernetEngine(BaseEngine):
                             f"{self.__fhandler.currfile} is empty. Skipping...")
 
                     else:
-                        progress.step(self.__fhandler.currfile)
+                        progress_manager.step(self.__fhandler.currfile)
 
                         LOG.info(
                             f"Encrypting file {self.__fhandler.currfile}...")
@@ -116,15 +119,16 @@ class FernetEngine(BaseEngine):
         files_processed = 0
         files_skipped = 0
 
+        progress_manager = PM("[cyan]Dencrypting...[/cyan]", self.__fhandler.file_ammount)
         try:
-            with PM("[cyan]Dencrypting...[/cyan]", self.__fhandler.file_ammount) as progress:
+            with progress_manager.progress:
 
                 file_ = self.__fhandler.request()
 
                 while file_ is not None:
 
                     if len(file_) == 0:
-                        progress.step(
+                        progress_manager.step(
                             f"{self.__fhandler.currfile} is empty. Skipping...")
 
                         files_skipped += 1
@@ -133,7 +137,7 @@ class FernetEngine(BaseEngine):
                             f"{self.__fhandler.currfile} is empty. Skipping...")
 
                     else:
-                        progress.step(self.__fhandler.currfile)
+                        progress_manager.step(self.__fhandler.currfile)
 
                         LOG.info(
                             f"Decrypting file {self.__fhandler.currfile}...")
@@ -155,7 +159,7 @@ class FernetEngine(BaseEngine):
                 f"Stopped decryption after {files_processed + files_skipped} files.")
 
         except (InvalidSignature, InvalidToken):
-            progress.stop()
+            progress_manager.stop()
             CONSOLE.error(
                 (
                     "The specified file doesn't appear to have been encrypted with the Fernet engine,"

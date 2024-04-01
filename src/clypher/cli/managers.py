@@ -204,17 +204,5 @@ class ProgressManager:
 
         self.progress.update(self._task, advance=1)
 
-    def __enter__(self, *args, **kwargs):
-        """
-        Simply call the Progress class methods to make the manager a context manager.
-        """
-        return self.progress.__enter__(*args, **kwargs)
-    
-    def __exit__(self, *args, **kwargs):
-        """
-        Simply call the Progress class methods to make the manager a context manager.
-        """
-        return self.progress.__exit__(*args, **kwargs)
-    
     def stop(self):
         return self.progress.stop()

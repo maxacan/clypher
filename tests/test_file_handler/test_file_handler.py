@@ -1,5 +1,5 @@
 import os
-from clypher.src.file_handlers.file_handler import FileHandler
+from file_handlers.file_handler import FileHandler
 import pytest
 from pathlib import Path
 

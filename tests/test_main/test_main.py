@@ -1,7 +1,7 @@
 from typer.testing import CliRunner
 from _version import __version__
 
-from clypher.__main__ import app
+from main import app
 
 RUNNER = CliRunner()
 

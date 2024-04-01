@@ -4,19 +4,18 @@ from typing import List, Optional
 from pathlib import Path
 from typing_extensions import Annotated
 
-from src.cli.managers import ConsoleManager as CONSOLE
-from src.import_handler.import_handler import import_engine
+from cli.managers import ConsoleManager as CONSOLE
+from import_handler.import_handler import import_engine
 
 
-
-def decrypt(
+def encrypt(
     input_files: Annotated[
         List[Path],
         typer.Argument()
     ] = None,
     out: Annotated[
         Optional[Path],
-        typer.Option(help="Output directory name.")
+        typer.Option(help="Output dir.")
     ] = None,
     password: Annotated[
         Optional[str],
@@ -35,32 +34,34 @@ def decrypt(
         Optional[str],
         typer.Option(help="The encryption engine to use.")
     ] = "fernet",
-
     recursive: Annotated[
-        Optional[bool],
-        typer.Option(
-            "--recursive",
-            help="If used, recursively traverse any input directories, adding each file as an input. Use with caution."
-        )
+    Optional[bool],
+    typer.Option(
+        "--recursive",
+        help="If used, recursively traverse any input directories, adding each file as an input. Use with caution."
+    )
     ] = False
 ):
-    
+    """
+    Encrypt the file, files or directories passed as arguments.
+    """
+
     if len(input_files) == 0:
         CONSOLE.error("No input was provided.")
         raise SystemExit(1)
 
     if password is None:
-        password = CONSOLE.ask_password(mode="decryption")
+        password = CONSOLE.ask_password(mode="encryption")
 
+    # Import the engine needed for operation
     engine_class = import_engine(engine)
 
-    engine_instance = engine_class(
+    engine_class = engine_class(
         password=password,
         infiles=input_files,
         output=out,
         force_ow=force_overwrite,
-        decrypting = True,
         recursive = recursive
     )
 
-    engine_instance.start_decryption()
+    engine_class.start_encryption()

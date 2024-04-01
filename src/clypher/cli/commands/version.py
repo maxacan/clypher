@@ -1,5 +1,5 @@
 import typer
-from src.cli.managers import ConsoleManager as CONSOLE
+from cli.managers import ConsoleManager as CONSOLE
 app = typer.Typer()
 
 @app.callback(invoke_without_command=True, help="Print the current package version.")
